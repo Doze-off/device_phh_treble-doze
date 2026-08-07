@@ -1104,7 +1104,7 @@ if [ -f /vendor/etc/init/vendor.ozoaudio.media.c2@1.0-service.rc ];then
     fi
 fi
 
-if [ "$vndk" -le 27 ];then
+if [ -n "$vndk" ] && [ "$vndk" -le 27 ];then
     setprop persist.sys.phh.no_present_or_validate true
 fi
 

@@ -16,8 +16,14 @@ service phh_on_boot /system/bin/phh-on-boot.sh
     oneshot
     disabled
 
+service power_mode_monitor /system/bin/power-mode-monitor.sh
+    oneshot
+    disabled
+    seclabel u:r:phhsu_daemon:s0
+
 on property:sys.boot_completed=1
     start phh_on_boot
+    start power_mode_monitor
     chown wifi system /data/misc/wifi
     chown system wifi /data/misc/wifi/hostapd.conf
 
