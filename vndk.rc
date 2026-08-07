@@ -69,8 +69,21 @@ on property:persist.sys.phh.backlight.scale=*
 on property:persist.sys.phh.disable_soundvolume_effect=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.disable_soundvolume_effect"
 
-on property:ro.sf.lcd_density=*
-    restart surfaceflinger
+# ro.sf.lcd_density is set by rw-system.sh during post-fs, before
+# surfaceflinger starts.  the previous `restart surfaceflinger` here
+# killed the already-running SF to pick up the new density, but that
+# caused the DRM pipeline to reset without a clean panel power-off.
+# on devices with an external backlight IC (e.g. ktz8866) the kernel
+# panel driver's state tracking desyncs from the hardware: it believes
+# the bias/boost is still enabled from the bootloader, so the power-on
+# path in the second SF never calls bias_enable(1).  the backlight IC
+# stays off and the display is permanently blank.
+#
+# removing the restart is safe because rw-system.sh runs before
+# class_start core, so ro.sf.lcd_density is already set when SF reads
+# it during init().
+#on property:ro.sf.lcd_density=*
+#    restart surfaceflinger
 
 on property:persist.bluetooth.system_audio_hal.enabled=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.bluetooth.system_audio_hal.enabled"
