@@ -8,3 +8,8 @@ allow hal_fingerprint_oplus vendor_default_prop:property_service set;
 get_prop(hal_fingerprint_oplus, default_prop);
 get_prop(system_server, vendor_default_prop);
 
+# allow TrebleApp (system_app/platform_app) to report OPPO/Realme/OnePlus
+# fingerprint-on-display press events via sys.phh.oplus.fppress.
+type phh_oplus_prop, property_type;
+set_prop(system_app, phh_oplus_prop);
+set_prop(platform_app, phh_oplus_prop);
