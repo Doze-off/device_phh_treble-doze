@@ -9,6 +9,13 @@ type hal_graphics_composer_default, domain;
 type hal_sec_inputdev_default, domain;
 allow hal_sec_inputdev_default system_prop:file { getattr map open read };
 
+# allow system_server to access samsung touch sysfs for the
+# check_connection fallback when the sysinput HAL is missing.
+# rw-system.sh relabels /sys/class/sec/tsp/{cmd,cmd_result,input/enabled}
+# to this type.
+type sysfs_ss_writable, file_type, sysfs_type;
+allow system_server sysfs_ss_writable:file { getattr open read write };
+
 # allow USB HAL to read system properties on samsung exynos devices
 # (the coral USB HAL used by TrebleDroid is denied access to system_prop,
 # which breaks USB port role switching on devices like the galaxy M33)
