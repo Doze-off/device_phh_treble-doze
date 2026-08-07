@@ -11,6 +11,20 @@ if [ ! -e /sys/fs/bpf/netd_shared/map_netd_uid_owner_map ]; then
     log -t phh-on-boot "Disabled restricted_networking_mode (BPF uid_owner_map absent)"
 fi
 
+# Disable FUSE BPF on devices whose kernels lack fuse-bpf support.
+# Android 16 enables FUSE BPF by default, which requires kernel support for
+# the fuse-bpf program type. On older kernels (< 5.4 without backport),
+# fuseMedia.bpf fails to load and the FuseDaemon falls back to legacy mode
+# but the legacy FUSE path may not work correctly on QPR2+. Setting
+# persist.sys.fuse.bpf.override=false tells the FuseDaemon and vold to
+# use the legacy FUSE path from the start, avoiding the failed BPF load
+# and ensuring bind-mounts for Android/data and Android/obb are set up
+# correctly by vold.
+if [ ! -f /sys/fs/fuse/features/fuse_bpf ]; then
+    setprop persist.sys.fuse.bpf.override false
+    log -t phh-on-boot "Disabled FUSE BPF (kernel fuse_bpf feature absent)"
+fi
+
 vndk="$(getprop persist.sys.vndk)"
 [ -z "$vndk" ] && vndk="$(getprop ro.vndk.version |grep -oE '^[0-9]+')"
 
