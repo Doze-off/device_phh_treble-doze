@@ -49,3 +49,16 @@ bluetooth.profile.sap.server.enabled?=true
 
 # Samsung vendors default to a Samsung-specific gadget for MTP. Set this to use AOSP's functionfs MTP
 vendor.usb.use_ffs_mtp=1
+
+# lmkd tuning: safe defaults for GSI across diverse hardware
+# Disable critical_upgrade to prevent overly aggressive kills on devices
+# where memory pressure detection may not work correctly (e.g., older kernels)
+ro.lmk.critical_upgrade=false
+# Kill heaviest task first for more predictable memory management
+ro.lmk.kill_heaviest_task=true
+
+# Heap floor: vendor build.prop values as low as 16m are seen in the wild.
+# Android 16 system_server needs ~200m+ to initialise; override with a safe
+# minimum while preserving larger vendor values via the ? default operator.
+dalvik.vm.heapgrowthlimit?=256m
+dalvik.vm.heapsize?=512m
