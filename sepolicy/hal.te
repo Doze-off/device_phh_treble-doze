@@ -1,3 +1,14 @@
+# allow health HAL to read vendor-labelled battery/charger/power_supply sysfs.
+# some vendors (samsung, others) label all power_supply nodes under a
+# vendor-defined sysfs_battery type instead of AOSP's sysfs_batteryinfo.
+# without this rule the health HAL is denied access and healthd reports
+# no battery devices.
+type hal_health_default, domain;
+type sysfs_battery, fs_type, sysfs_type;
+allow hal_health_default sysfs_battery:dir { getattr open read search };
+allow hal_health_default sysfs_battery:file { getattr open read };
+allow hal_health_default sysfs_battery:lnk_file { getattr read };
+
 type hal_fingerprint_oppo_compat, domain;
 hal_client_domain(hal_fingerprint_oppo_compat, hal_fingerprint)
 hal_server_domain(hal_fingerprint_oppo_compat, hal_fingerprint)
