@@ -62,3 +62,11 @@ ro.lmk.kill_heaviest_task=true
 # minimum while preserving larger vendor values via the ? default operator.
 dalvik.vm.heapgrowthlimit?=256m
 dalvik.vm.heapsize?=512m
+
+# disable QPR2 vsync omission optimisation for GSI compatibility.
+# on GSI builds, vendor HWCs may not properly initialise DRM vblank
+# events during the boot power-on sequence, leaving hardware vsync
+# unavailable.  with this flag enabled, the EventThread enters Idle
+# state and composition stalls.  disabling it restores QPR0 behaviour
+# where synthetic vsync keeps composition alive as a fallback.
+debug.sf.no_vsyncs_on_screen_off=false
