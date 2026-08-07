@@ -800,6 +800,20 @@ copyprop() {
         resetprop_phh "$1" "$(getprop "$2")"
     fi
 }
+
+# OPPO/Realme devices with MTK vendor kernels include an oppo_root_check
+# kernel module that detects an unlocked bootloader and forces a reboot to
+# recovery.  set the boot-state properties to "locked" so any userspace
+# component of the check sees a locked device.  use ro.product.vendor.brand
+# (not ro.product.brand) because the GSI system image overrides
+# ro.product.brand early in boot, before this script runs.
+brand="$(getprop ro.product.vendor.brand)"
+if [ "$brand" = OPPO ] || [ "$brand" = realme ]; then
+    resetprop_phh ro.boot.flash.locked 1
+    resetprop_phh ro.boot.vbmeta.device_state locked
+    resetprop_phh ro.boot.verifiedbootstate green
+fi
+
 if [ -f /system/phh/secure ] || [ -f /metadata/phh/secure ];then
     copyprop ro.build.device ro.vendor.build.device
     copyprop ro.system.build.fingerprint ro.vendor.build.fingerprint
