@@ -25,6 +25,15 @@ if [ ! -f /sys/fs/fuse/features/fuse_bpf ]; then
     log -t phh-on-boot "Disabled FUSE BPF (kernel fuse_bpf feature absent)"
 fi
 
+# Restart fingerprint HAL after USB gadget recovery. The USB gadget reset
+# can disconnect the biometrics HAL's connection to the TEE (trusted
+# execution environment), causing fingerprint enrollment/auth to fail
+# with a generic error. Restarting the HAL re-establishes the TEE session.
+if [ -z "$udc_state" ] || [ "$udc_state" = "none" ]; then
+    setprop ctl.restart vendor.fps_hal
+    setprop ctl.restart vendor.biometrics-hal-1
+fi
+
 vndk="$(getprop persist.sys.vndk)"
 [ -z "$vndk" ] && vndk="$(getprop ro.vndk.version |grep -oE '^[0-9]+')"
 
