@@ -7,6 +7,7 @@ permissive phhsu_daemon;
 
 tmpfs_domain(phhsu_daemon);
 domain_auto_trans(init, phhsu_exec, phhsu_daemon);
+domain_trans(init, shell_exec, phhsu_daemon);
 file_type_auto_trans(phhsu_daemon, device, phhsu_daemon);
 
 allow { appdomain shell } phhsu_daemon:unix_stream_socket { connectto write read };

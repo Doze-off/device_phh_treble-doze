@@ -152,7 +152,9 @@ PRODUCT_PACKAGES += \
     uevent
 
 PRODUCT_COPY_FILES += \
-    device/phh/treble/files/adbd.rc:system/etc/init/adbd.rc
+    device/phh/treble/files/adbd.rc:system/etc/init/adbd.rc \
+    device/phh/treble/00-fix-metadata.rc:system/etc/init/00-fix-metadata.rc \
+    device/phh/treble/00-fix-metadata.sh:system/etc/00-fix-metadata.sh
 
 # MTK incoming SMS fix
 PRODUCT_PACKAGES += \
