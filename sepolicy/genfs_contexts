@@ -1,1 +1,3 @@
 genfscon sysfs /board_properties u:object_r:sysfs_board_properties:s0
+
+genfscon sysfs /devices/platform/soc/soc:mtk_leds/leds u:object_r:sysfs_leds:s0

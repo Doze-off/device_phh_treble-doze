@@ -10,6 +10,9 @@ allow mtk_hal_audio audioserver:fifo_file write;
 allow mtk_hal_audio untrusted_app:fifo_file write;
 allow hal_audio_sysbta untrusted_app:fifo_file write;
 
+type mtk_hal_light, domain;
+typeattribute mtk_hal_light hal_light_server;
+
 type mtk_hal_power, domain;
 allow mtk_hal_power system_data_root_file:file create_file_perms;
 allow zygote ashmem_device:chr_file execute;
