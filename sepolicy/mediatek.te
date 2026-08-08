@@ -33,3 +33,6 @@ permissive tkcore;
 
 allow platform_app sysfs_leds:dir r_dir_perms;
 allow platform_app sysfs_leds:file r_file_perms;
+
+# Needed for headphone detection when opening /bus/platform/drivers/pmic-codec-accdet/state
+allow mtk_hal_audio sysfs:file r_file_perms;
