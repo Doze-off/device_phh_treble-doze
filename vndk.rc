@@ -127,6 +127,53 @@ on property:persist.sys.phh.ims.floss=true
 on property:persist.sys.phh.enable_sf_gl_backpressure=*
     setprop debug.sf.enable_gl_backpressure ${persist.sys.phh.enable_sf_gl_backpressure}
 
+on property:persist.sys.phh.enable_sf_hwc_backpressure=*
+    setprop debug.sf.enable_hwc_backpressure ${persist.sys.phh.enable_sf_hwc_backpressure}
+
+on property:persist.sys.phh.lmk_tweaks=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.lmk_tweaks"
+
+on property:persist.sys.phh.scroll_boost=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.scroll_boost"
+
+on property:persist.sys.phh.axion_props=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.axion_props"
+
+on property:persist.sys.phh.traffic_indicator_fallback=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.traffic_indicator_fallback"
+
+on property:persist.sys.phh.bluetooth_fix=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.bluetooth_fix"
+
+on property:persist.sys.activity_anim_perf_override=*
+     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.sf.predict_hwc_composition_strategy 0
+
+on property:persist.sys.phh.prefer_hw_codecs=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection aidl
+
+on property:persist.sys.phh.force_sw_codecs=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 512
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+
+# Latch Unsigned Buffers
+on property:persist.sys.phh.sf_latch_unsignaled=*
+    setprop debug.sf.latch_unsignaled ${persist.sys.phh.sf_latch_unsignaled}
+
+# Auto Latch Unsigned
+on property:persist.sys.phh.sf_auto_latch_unsignaled=*
+    setprop debug.sf.auto_latch_unsignaled ${persist.sys.phh.sf_auto_latch_unsignaled}
+
+# Disable Backpressure
+on property:persist.sys.phh.sf_disable_backpressure=*
+    setprop debug.sf.disable_backpressure ${persist.sys.phh.sf_disable_backpressure}
+
+on property:persist.sys.phh.sf.background_blur=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.sf.background_blur"
+
 on property:persist.sys.phh.dynamic_fps=*
     setprop ro.surface_flinger.use_content_detection_for_refresh_rate ${persist.sys.phh.dynamic_fps}
 

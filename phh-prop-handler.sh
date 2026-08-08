@@ -308,3 +308,266 @@ if [ "$1" == "persist.bluetooth.system_audio_hal.enabled" ]; then
     restartAudio
     exit
 fi
+
+if [ "$1" == "persist.sys.phh.bluetooth_fix" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+
+    if [[ "$prop_value" == "true" ]]; then
+      resetprop_phh persist.bluetooth.bluetooth_audio_hal.disabled true
+      resetprop_phh persist.vendor.btstack.enable.lpa false
+      resetprop_phh ro.bluetooth.a2dp_offload.supported false
+      resetprop_phh persist.sys.phh.disable_a2dp_offload true
+      resetprop_phh vendor.bluetooth.a2dp.offload.enable false
+    else
+      resetprop_phh --delete persist.bluetooth.bluetooth_audio_hal.disabled
+      resetprop_phh --delete persist.vendor.btstack.enable.lpa
+      resetprop_phh --delete ro.bluetooth.a2dp_offload.supported
+      resetprop_phh --delete persist.sys.phh.disable_a2dp_offload
+      resetprop_phh --delete vendor.bluetooth.a2dp.offload.enable
+    fi
+    restartAudio
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.lmk_tweaks" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        # aggressive lmkd + background-app limits: free foreground headroom on
+        # low-RAM devices (e.g. kernel-4.9 GSIs where isolated renderers get
+        # OOM-reaped, #92). overrides the GSI's system.prop lmkd defaults.
+        resetprop_phh ro.lmk.use_minfree_levels true
+        resetprop_phh ro.lmk.kill_timeout_ms 100
+        resetprop_phh ro.lmk.low 1001
+        resetprop_phh ro.lmk.medium 800
+        resetprop_phh ro.lmk.critical 0
+        resetprop_phh ro.lmk.kill_heaviest_task false
+        resetprop_phh ro.lmk.critical_upgrade false
+        resetprop_phh ro.lmk.upgrade_pressure 100
+        resetprop_phh ro.lmk.downgrade_pressure 250
+        resetprop_phh ro.lmk.psi_partial_stall_ms 200
+        resetprop_phh ro.lmk.psi_complete_stall_ms 700
+        resetprop_phh ro.sys.fw.bg_apps_limit 16
+        resetprop_phh ro.config.max_starting_bg 8
+    else
+        # off: remove the overrides so the GSI's system.prop lmkd defaults
+        # (trebledroid-staging 0014) apply again.
+        resetprop_phh --delete ro.lmk.use_minfree_levels
+        resetprop_phh --delete ro.lmk.kill_timeout_ms
+        resetprop_phh --delete ro.lmk.low
+        resetprop_phh --delete ro.lmk.medium
+        resetprop_phh --delete ro.lmk.critical
+        resetprop_phh --delete ro.lmk.kill_heaviest_task
+        resetprop_phh --delete ro.lmk.critical_upgrade
+        resetprop_phh --delete ro.lmk.upgrade_pressure
+        resetprop_phh --delete ro.lmk.downgrade_pressure
+        resetprop_phh --delete ro.lmk.psi_partial_stall_ms
+        resetprop_phh --delete ro.lmk.psi_complete_stall_ms
+        resetprop_phh --delete ro.sys.fw.bg_apps_limit
+        resetprop_phh --delete ro.config.max_starting_bg
+    fi
+    setprop ctl.restart lmkd
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.axion_props" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        #axion props
+        # set threshold to filter unused apps
+        resetprop_phh pm.dexopt.downgrade_after_inactive_days 10
+        resetprop_phh pm.dexopt.boot-after-ota speed-profile
+
+        resetprop_phh dalvik.vm.enable_pr_dexopt true
+        resetprop_phh dalvik.vm.finalizer-timeout-ms 40000
+        resetprop_phh dalvik.vm.ps-min-first-save-ms 150000
+
+        # disable RescueParty
+        resetprop_phh persist.sys.disable_rescue true
+
+        # sf
+        resetprop_phh ro.surface_flinger.uclamp.min 165
+
+        # sound
+        resetprop_phh audio.safemedia.bypass 1
+
+
+
+        # virtual ab
+        resetprop_phh ro.virtual_ab.compression.enabled true
+        resetprop_phh ro.virtual_ab.userspace.snapshots.enabled true
+        resetprop_phh ro.virtual_ab.batch_writes true
+        resetprop_phh ro.virtual_ab.io_uring.enabled false
+        resetprop_phh ro.virtual_ab.compression.xor.enabled false
+        resetprop_phh ro.virtual_ab.read_ahead_size 16
+        resetprop_phh ro.virtual_ab.o_direct.enabled true
+        resetprop_phh ro.virtual_ab.merge_thread_priority 19
+        resetprop_phh ro.virtual_ab.worker_thread_priority 0
+        resetprop_phh ro.virtual_ab.num_worker_threads 3
+        resetprop_phh ro.virtual_ab.num_merge_threads 1
+        resetprop_phh ro.virtual_ab.num_verify_threads 1
+        resetprop_phh ro.virtual_ab.cow_op_merge_size 16
+        resetprop_phh ro.virtual_ab.verify_threshold_size 1073741824
+        resetprop_phh ro.virtual_ab.verify_block_size 1048576
+        resetprop_phh ro.virtual_ab.compression.threads true
+
+        # Disable touch video heatmap to reduce latency, motion jitter, and CPU usage
+        # on supported devices with Deep Press input classifier HALs and models
+        resetprop_phh ro.input.video_enabled false
+
+        # EGL shader cache
+        resetprop_phh ro.egl.blobcache.multifile_limit 67108864
+    else
+        #axion props
+        # set threshold to filter unused apps
+        resetprop_phh --delete pm.dexopt.downgrade_after_inactive_days
+        resetprop_phh --delete pm.dexopt.boot-after-ota
+
+        resetprop_phh --delete dalvik.vm.enable_pr_dexopt
+        resetprop_phh --delete dalvik.vm.finalizer-timeout-ms
+        resetprop_phh --delete dalvik.vm.ps-min-first-save-ms
+
+        # disable RescueParty
+        resetprop_phh --delete persist.sys.disable_rescue
+
+        # sf
+        resetprop_phh --delete ro.surface_flinger.uclamp.min
+
+        # sound
+        resetprop_phh --delete audio.safemedia.bypass
+
+        # virtual ab
+        resetprop_phh --delete ro.virtual_ab.compression.enabled
+        resetprop_phh --delete ro.virtual_ab.userspace.snapshots.enabled
+        resetprop_phh --delete ro.virtual_ab.batch_writes
+        resetprop_phh --delete ro.virtual_ab.io_uring.enabled
+        resetprop_phh --delete ro.virtual_ab.compression.xor.enabled
+        resetprop_phh --delete ro.virtual_ab.read_ahead_size
+        resetprop_phh --delete ro.virtual_ab.o_direct.enabled
+        resetprop_phh --delete ro.virtual_ab.merge_thread_priority
+        resetprop_phh --delete ro.virtual_ab.worker_thread_priority
+        resetprop_phh --delete ro.virtual_ab.num_worker_threads
+        resetprop_phh --delete ro.virtual_ab.num_merge_threads
+        resetprop_phh --delete ro.virtual_ab.num_verify_threads
+        resetprop_phh --delete ro.virtual_ab.cow_op_merge_size
+        resetprop_phh --delete ro.virtual_ab.verify_threshold_size
+        resetprop_phh --delete ro.virtual_ab.verify_block_size
+        resetprop_phh --delete ro.virtual_ab.compression.threads
+
+        # Disable touch video heatmap to reduce latency, motion jitter, and CPU usage
+        # on supported devices with Deep Press input classifier HALs and models
+        resetprop_phh --delete ro.input.video_enabled
+
+        # EGL shader cache
+        resetprop_phh --delete ro.egl.blobcache.multifile_limit
+
+    fi
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.scroll_boost" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh persist.sys.perf.scroll_opt true
+        resetprop_phh persist.sys.perf.scroll_opt.heavy_app 2
+    else
+        resetprop_phh --delete persist.sys.perf.scroll_opt
+        resetprop_phh --delete persist.sys.perf.scroll_opt.heavy_app
+    fi
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.traffic_indicator_fallback" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh persist.sys.phh.traffic_indicator_fallback true
+        resetprop_phh --delete ro.bpf.kver_override
+    else
+        resetprop_phh persist.sys.phh.traffic_indicator_fallback false
+        resetprop_phh ro.bpf.kver_override 5.10.239
+    fi
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
+    if [[ "$prop_value" != "disabled" && "$prop_value" != "gaussian" && "$prop_value" != "kawase" && "$prop_value" != "kawase2" ]]; then
+        exit 1
+    fi
+
+    if [[ "$prop_value" == disabled ]]; then
+        resetprop_phh ro.surface_flinger.supports_background_blur 0
+        settings put global disable_window_blurs 1
+        resetprop_phh --delete debug.renderengine.blur_algorithm
+    fi
+
+    if [[ "$prop_value" == gaussian ]]; then
+        resetprop_phh ro.surface_flinger.supports_background_blur 1
+        settings put global disable_window_blurs 0
+        resetprop_phh ro.sf.blurs_are_expensive=0
+        resetprop_phh ro.launcher.blur.appLaunch=1
+        resetprop_phh debug.renderengine.blur_algorithm gaussian
+    fi
+
+    if [[ "$prop_value" == kawase ]]; then
+        resetprop_phh ro.surface_flinger.supports_background_blur 1
+        settings put global disable_window_blurs 0
+        resetprop_phh ro.sf.blurs_are_expensive=0
+        resetprop_phh ro.launcher.blur.appLaunch=0
+        resetprop_phh debug.renderengine.blur_algorithm kawase
+    fi
+
+    if [[ "$prop_value" == kawase2 ]]; then
+        resetprop_phh ro.surface_flinger.supports_background_blur 1
+        settings put global disable_window_blurs 0
+        resetprop_phh ro.sf.blurs_are_expensive=0
+        resetprop_phh ro.launcher.blur.appLaunch=0
+        resetprop_phh debug.renderengine.blur_algorithm kawase2
+    fi
+
+        if [[ "$prop_value" == kawase2_fix_aliasing ]]; then
+        resetprop_phh ro.surface_flinger.supports_background_blur 1
+        settings put global disable_window_blurs 0
+        resetprop_phh ro.sf.blurs_are_expensive=0
+        resetprop_phh ro.launcher.blur.appLaunch=0
+        resetprop_phh debug.renderengine.blur_algorithm kawase2_fix_aliasing
+    fi
+    exit
+fi
+
+
+if [ "$1" == "debug.renderengine.backend" ]; then
+    if [[ "$prop_value" != "" && "$prop_value" != "skiagl" && "$prop_value" != "skiaglthreaded" && "$prop_value" != "skiavk" && "$prop_value" != "skiavkthreaded" ]]; then
+        exit 1
+    fi
+
+    if [[ "$prop_value" == "" ]]; then
+        resetprop_phh --delete debug.renderengine.backend
+    fi
+
+    if [[ "$prop_value" == skiagl ]]; then
+        resetprop_phh debug.renderengine.backend skiagl
+    fi
+
+    if [[ "$prop_value" == skiaglthreaded ]]; then
+        resetprop_phh debug.renderengine.backend skiaglthreaded
+    fi
+
+    if [[ "$prop_value" == skiavk ]]; then
+        resetprop_phh debug.renderengine.backend skiavk
+    fi
+
+    if [[ "$prop_value" == skiavkthreaded ]]; then
+        resetprop_phh debug.renderengine.backend skiavkthreaded
+    fi
+
+    exit
+fi
