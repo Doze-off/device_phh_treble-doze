@@ -14,6 +14,12 @@ USE_EROFS := false
 # Defines whether MicroG should be included in the build.
 BUILD_MICROG := false
 
+SELINUX_IGNORE_NEVERALLOWS := true
+TARGET_NO_KERNEL_OVERRIDE := true
+TARGET_NO_KERNEL_IMAGE := true
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
+override BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
 # If USE_EROFS is enabled, build the image using EROFS.
 ifeq ($(USE_EROFS), true)
     # Selects EROFS as the filesystem for the GSI image.
