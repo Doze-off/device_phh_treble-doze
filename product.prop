@@ -1,0 +1,9 @@
+#blur active
+ro.surface_flinger.supports_background_blur=1
+ro.sf.blurs_are_expensive=0
+ro.launcher.blur.appLaunch=0
+
+# Enable Material Design 3 Expressive
+is_expressive_design_enabled=true
+
+ro.bpf.kver_override=5.10.239

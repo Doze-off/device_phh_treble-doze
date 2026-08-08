@@ -263,3 +263,5 @@ PRODUCT_PRODUCT_PROPERTIES += \
     persist.settings.large_screen_opt.enabled=true
 
 PRODUCT_EXTRA_VNDK_VERSIONS += 28 29 30
+
+$(call inherit-product, device/phh/treble/flags.mk)
