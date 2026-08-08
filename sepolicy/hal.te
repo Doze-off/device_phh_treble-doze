@@ -20,6 +20,9 @@ init_daemon_domain(hal_fingerprint_oppo_compat)
 type hal_fingerprint_oppo, domain;
 allow hal_fingerprint_oppo vendor_default_prop:property_service { set };
 
+allow hal_fingerprint_oppo_compat hwservicemanager:hwservice_manager find;
+allow hal_fingerprint_oppo_compat default_android_hwservice:hwservice_manager find;
+
 # allow vendor domains to read system and default properties.
 # vendor blobs compiled against older AOSP versions routinely read
 # system_prop and default_prop for feature detection, configuration,
