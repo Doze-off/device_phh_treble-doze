@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="config_enableAuxCameras">true</bool>
+
+    <string-array name="config_additionalVideoConfigurations">
+        <item>0</item> <item>sd|hd|fhd|uhd</item> <item>24|30|60|120</item>
+    </string-array>
+</resources>
