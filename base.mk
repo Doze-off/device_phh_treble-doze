@@ -208,6 +208,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     debug.fdsan=warn_once \
+    debug.stagefright.c2inputsurface=-1 \
     persist.sys.fflag.override.settings_provider_model=false \
     ro.setupwizard.mode=OPTIONAL \
 

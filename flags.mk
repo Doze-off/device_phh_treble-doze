@@ -20,6 +20,8 @@ TARGET_NO_KERNEL_IMAGE := true
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := false
 override BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
+
+BOARD_RAMDISK_USE_LZ4 := true
 # If USE_EROFS is enabled, build the image using EROFS.
 ifeq ($(USE_EROFS), true)
     # Selects EROFS as the filesystem for the GSI image.
