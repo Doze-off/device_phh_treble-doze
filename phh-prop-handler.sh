@@ -499,7 +499,7 @@ if [ "$1" == "persist.sys.phh.traffic_indicator_fallback" ]; then
 fi
 
 if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
-    if [[ "$prop_value" != "disabled" && "$prop_value" != "gaussian" && "$prop_value" != "kawase" && "$prop_value" != "kawase2" ]]; then
+    if [[ "$prop_value" != "disabled" && "$prop_value" != "gaussian" && "$prop_value" != "kawase" && "$prop_value" != "kawase2" && "$prop_value" != "kawase2_fix_aliasing" ]]; then
         exit 1
     fi
 
@@ -523,6 +523,8 @@ if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
         resetprop_phh ro.sf.blurs_are_expensive=0
         resetprop_phh ro.launcher.blur.appLaunch=0
         resetprop_phh debug.renderengine.blur_algorithm kawase
+        aflags disable com.android.graphics.surfaceflinger.flags.window_blur_kawase2
+        aflags disable com.android.graphics.surfaceflinger.flags.window_blur_kawase2_fix_aliasing
     fi
 
     if [[ "$prop_value" == kawase2 ]]; then
@@ -531,14 +533,18 @@ if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
         resetprop_phh ro.sf.blurs_are_expensive=0
         resetprop_phh ro.launcher.blur.appLaunch=0
         resetprop_phh debug.renderengine.blur_algorithm kawase2
+        aflags enable com.android.graphics.surfaceflinger.flags.window_blur_kawase2
+        aflags disable com.android.graphics.surfaceflinger.flags.window_blur_kawase2_fix_aliasing
     fi
 
-        if [[ "$prop_value" == kawase2_fix_aliasing ]]; then
+    if [[ "$prop_value" == kawase2_fix_aliasing ]]; then
         resetprop_phh ro.surface_flinger.supports_background_blur 1
         settings put global disable_window_blurs 0
         resetprop_phh ro.sf.blurs_are_expensive=0
         resetprop_phh ro.launcher.blur.appLaunch=0
         resetprop_phh debug.renderengine.blur_algorithm kawase2_fix_aliasing
+        aflags enable com.android.graphics.surfaceflinger.flags.window_blur_kawase2
+        aflags enable com.android.graphics.surfaceflinger.flags.window_blur_kawase2_fix_aliasing
     fi
 
     setprop ctl.restart surfaceflinger
