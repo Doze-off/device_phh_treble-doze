@@ -70,3 +70,7 @@ dalvik.vm.heapsize?=512m
 # state and composition stalls.  disabling it restores QPR0 behaviour
 # where synthetic vsync keeps composition alive as a fallback.
 debug.sf.no_vsyncs_on_screen_off=false
+
+ro.hwui.use_vulkan?=0
+
+

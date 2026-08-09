@@ -587,15 +587,15 @@ if [ "$1" == "persist.sys.phh.sf.debug.renderengine.backend" ]; then
     fi
 
     if [[ "$prop_value" == "" ]]; then
-        resetprop_phh --delete debug.hwui.renderer
+        resetprop_phh --delete ro.hwui.use_vulkan
     fi
 
     if [[ "$prop_value" == skiagl ]]; then
-        resetprop_phh debug.hwui.renderer skiagl
+        resetprop_phh ro.hwui.use_vulkan 0
     fi
 
     if [[ "$prop_value" == skiavk ]]; then
-        resetprop_phh debug.hwui.renderer skiavk
+        resetprop_phh ro.hwui.use_vulkan 1
     fi
 
     setprop ctl.restart surfaceflinger
