@@ -540,11 +540,13 @@ if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
         resetprop_phh ro.launcher.blur.appLaunch=0
         resetprop_phh debug.renderengine.blur_algorithm kawase2_fix_aliasing
     fi
+
+    setprop ctl.restart surfaceflinger
     exit
 fi
 
 
-if [ "$1" == "debug.renderengine.backend" ]; then
+if [ "$1" == "persist.sys.phh.sf.renderengine.backend" ]; then
     if [[ "$prop_value" != "" && "$prop_value" != "skiagl" && "$prop_value" != "skiaglthreaded" && "$prop_value" != "skiavk" && "$prop_value" != "skiavkthreaded" ]]; then
         exit 1
     fi
@@ -569,5 +571,27 @@ if [ "$1" == "debug.renderengine.backend" ]; then
         resetprop_phh debug.renderengine.backend skiavkthreaded
     fi
 
+    setprop ctl.restart surfaceflinger
+    exit
+fi
+
+if [ "$1" == "persist.sys.phh.sf.debug.renderengine.backend" ]; then
+    if [[ "$prop_value" != "" && "$prop_value" != "skiagl" && "$prop_value" != "skiavk" ]]; then
+        exit 1
+    fi
+
+    if [[ "$prop_value" == "" ]]; then
+        resetprop_phh --delete debug.hwui.renderer
+    fi
+
+    if [[ "$prop_value" == skiagl ]]; then
+        resetprop_phh debug.hwui.renderer skiagl
+    fi
+
+    if [[ "$prop_value" == skiavk ]]; then
+        resetprop_phh debug.hwui.renderer skiavk
+    fi
+
+    setprop ctl.restart surfaceflinger
     exit
 fi
