@@ -598,6 +598,5 @@ if [ "$1" == "persist.sys.phh.sf.debug.renderengine.backend" ]; then
         resetprop_phh ro.hwui.use_vulkan 1
     fi
 
-    setprop ctl.restart surfaceflinger
     exit
 fi
