@@ -11,6 +11,7 @@ PRODUCT_MANUFACTURER := google
 PRODUCT_SYSTEM_MANUFACTURER := google
 
 PRODUCT_MODEL := Axion Treble
+LINEAGE_BUILD := axion
 
 # Overwrite the inherited "emulator" characteristics
 PRODUCT_CHARACTERISTICS := device
