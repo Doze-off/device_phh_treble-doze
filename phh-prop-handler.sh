@@ -488,13 +488,13 @@ if [ "$1" == "persist.sys.phh.traffic_indicator_fallback" ]; then
     if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
         exit 1
     fi
+
     if [[ "$prop_value" == "true" ]]; then
-        resetprop_phh persist.sys.phh.traffic_indicator_fallback true
         resetprop_phh --delete ro.bpf.kver_override
     else
-        resetprop_phh persist.sys.phh.traffic_indicator_fallback false
         resetprop_phh ro.bpf.kver_override 5.10.239
     fi
+
     exit
 fi
 
