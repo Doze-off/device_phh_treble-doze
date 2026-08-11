@@ -7,3 +7,5 @@ ro.launcher.blur.appLaunch=0
 is_expressive_design_enabled=true
 
 #ro.bpf.kver_override?=5.10.239
+
+ro.surface_flinger.game_default_frame_rate_override=120
