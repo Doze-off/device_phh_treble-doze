@@ -814,55 +814,6 @@ if [ "$brand" = OPPO ] || [ "$brand" = realme ]; then
     resetprop_phh ro.boot.verifiedbootstate green
 fi
 
-# Detect GSI system image changes before securize overwrites fingerprints.
-# PackageManagerService uses PackagePartitions.FINGERPRINT (a SHA-1 digest of
-# all ro.*.build.fingerprint properties) to detect upgrades and set mIsUpgrade.
-# Because securize replaces every system fingerprint property with the vendor
-# fingerprint, PMS always sees the same digest after first boot and mIsUpgrade
-# is always false, even after a real GSI upgrade.
-#
-# To work around this we compare the original (pre-securize) system fingerprint
-# against a persisted value and, when they differ, set persist.pm.mock-upgrade=true
-# which PMS ORs into isDeviceUpgrading(). The same comparison gates the
-# (no longer used for adb; release builds keep adb fully disabled.)
-#
-# Storage selection: neither /cache nor /metadata is universally available
-# at the time rw-system.sh runs.
-#   /metadata: real persistent partition on post-Q A/B devices; tmpfs on
-#              pre-Q devices without a metadata partition (see 00-fix-metadata.sh).
-#   /cache:    real persistent partition on non-A/B devices; a symlink to
-#              /data/cache on A/B devices, but /data is not yet mounted at
-#              this point in boot so writes would be silently lost.
-# Strategy: prefer /metadata if it is a real mountpoint (not tmpfs), else
-# prefer /cache if it is a real mountpoint, else skip persistence (best-effort).
-gsi_fp="$(getprop ro.system.build.fingerprint)"
-gsi_fp_dir=""
-if mountpoint -q /metadata && [ "$(stat -f -c %T /metadata)" != "tmpfs" ]; then
-    gsi_fp_dir="/metadata/phh"
-elif mountpoint -q /cache; then
-    gsi_fp_dir="/cache/phh"
-fi
-gsi_fp_file=""
-prev_gsi_fp=""
-if [ -n "$gsi_fp_dir" ]; then
-    mkdir -p "$gsi_fp_dir"
-    gsi_fp_file="$gsi_fp_dir/gsi_fingerprint"
-    [ -f "$gsi_fp_file" ] && prev_gsi_fp="$(cat "$gsi_fp_file")"
-fi
-if [ -n "$gsi_fp" ] && [ -n "$prev_gsi_fp" ] && [ "$gsi_fp" != "$prev_gsi_fp" ]; then
-    # fingerprint changed: GSI upgrade detected.
-    [ -n "$gsi_fp_file" ] && echo "$gsi_fp" > "$gsi_fp_file"
-    # signal PMS to run post-upgrade steps.
-    resetprop_phh -n persist.pm.mock-upgrade true
-elif [ -n "$gsi_fp" ] && [ -z "$prev_gsi_fp" ]; then
-    # no prior fingerprint: fresh flash, factory reset, or no persistent storage.
-    [ -n "$gsi_fp_file" ] && echo "$gsi_fp" > "$gsi_fp_file"
-    resetprop_phh -n persist.pm.mock-upgrade false
-else
-    # same build as last boot: clear upgrade flag.
-    resetprop_phh -n persist.pm.mock-upgrade false
-fi
-
 if [ ! -f /metadata/securize_disable ]; then
     copyprop ro.build.device ro.vendor.build.device
     copyprop ro.system.build.fingerprint ro.vendor.build.fingerprint
@@ -924,18 +875,6 @@ if [ ! -f /metadata/securize_disable ]; then
     resetprop_phh ro.debuggable 0
     resetprop_phh ro.secure 1
 
-    # update usb gadget strings so the device appears correctly when connected
-    model="$(getprop ro.product.model)"
-    manufacturer="$(getprop ro.product.manufacturer)"
-    gadget_strings="/config/usb_gadget/g1/strings/0x409"
-    legacy_usb="/sys/class/android_usb/android0"
-    if [ -d "$gadget_strings" ]; then
-        [ -n "$model" ] && echo "$model" > "$gadget_strings/product"
-        [ -n "$manufacturer" ] && echo "$manufacturer" > "$gadget_strings/manufacturer"
-    elif [ -d "$legacy_usb" ]; then
-        [ -n "$model" ] && echo "$model" > "$legacy_usb/iProduct"
-        [ -n "$manufacturer" ] && echo "$manufacturer" > "$legacy_usb/iManufacturer"
-    fi
 fi
 
 for abi in "" 64;do

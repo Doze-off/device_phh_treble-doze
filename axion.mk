@@ -27,7 +27,7 @@ HBM_SUPPORTED := true
 HBM_NODE := /sys/class/backlight/panel0-backlight/hbm_mode
 TORCH_STR_SUPPORTED := true
 TARGET_ENABLES_IMS_OVERRIDE := true
-TARGET_TOUCH_BOOST_SUPPORTED := true
+TARGET_TOUCH_BOOST_SUPPORTED := false
 
 # optional
 TARGET_DISABLES_LIBPERF := true

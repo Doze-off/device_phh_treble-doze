@@ -4,6 +4,8 @@ PRODUCT_COMPRESSED_APEX := false
 # Enables insecure ADB (root ADB access without authentication, depending on build configuration).
 WITH_ADB_INSECURE := true
 
+TARGET_NEEDS_VULKAN_MEDIA_FIX := true
+
 # Adds product-specific properties for the /product partition.
 TARGET_PRODUCT_PROP += device/phh/treble/product.prop
 # Adds system-specific properties for the /system partition.

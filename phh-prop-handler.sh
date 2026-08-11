@@ -490,9 +490,9 @@ if [ "$1" == "persist.sys.phh.traffic_indicator_fallback" ]; then
     fi
 
     if [[ "$prop_value" == "true" ]]; then
-        resetprop_phh --delete ro.bpf.kver_override
-    else
         resetprop_phh ro.bpf.kver_override 5.10.239
+    else
+        resetprop_phh --delete ro.bpf.kver_override
     fi
 
     exit
@@ -547,7 +547,6 @@ if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
         aflags enable com.android.graphics.surfaceflinger.flags.window_blur_kawase2_fix_aliasing
     fi
 
-    setprop ctl.restart surfaceflinger
     exit
 fi
 
@@ -577,7 +576,6 @@ if [ "$1" == "persist.sys.phh.sf.renderengine.backend" ]; then
         resetprop_phh debug.renderengine.backend skiavkthreaded
     fi
 
-    setprop ctl.restart surfaceflinger
     exit
 fi
 
