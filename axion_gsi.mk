@@ -10,7 +10,7 @@ PRODUCT_SYSTEM_BRAND := google
 PRODUCT_MANUFACTURER := google
 PRODUCT_SYSTEM_MANUFACTURER := google
 
-PRODUCT_MODEL := Axion Treble
+PRODUCT_MODEL := Axion GSI TrebleDroid
 LINEAGE_BUILD := axion
 
 # Overwrite the inherited "emulator" characteristics
