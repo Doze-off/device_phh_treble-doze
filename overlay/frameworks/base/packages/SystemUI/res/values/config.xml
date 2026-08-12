@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<resources>
+    <!-- Whether show refresh rate QS tile -->
+    <bool name="config_showRefreshRateQsTile">true</bool>
+    <bool name="custom_lockscreen_shortcuts_enabled">true</bool>
+    <bool name="config_turbulenceNoise">false</bool>
+
+    <!-- Preferred max refresh rate at AOD & Ambient Display, if supported by the display. -->
+    <integer name="config_aodMaxRefreshRate">144</integer>
+    <integer name="quick_settings_max_rows">3</integer>
+
+    <dimen name="status_bar_padding_end">3.0dp</dimen>
+    <dimen name="status_bar_padding_start">3.0dp</dimen>
+    <dimen name="status_bar_padding_top">5.0dp</dimen>
+    <dimen name="qs_icon_size">18.849976dip</dimen>
+    <dimen name="qs_corner_radius">56.0dip</dimen>
+    <dimen name="qs_tile_height">65.86805dp</dimen>
+    <dimen name="qs_tile_text_size">12.859955dip</dimen>
+    <dimen name="rounded_corner_content_padding">16.0dip</dimen>
+
+    <!-- The font size for the clock in the status bar. -->
+    <dimen name="status_bar_clock_size">15.809938dp</dimen>
+
+</resources>

@@ -31,8 +31,16 @@
 	<string name="config_dozeComponent">com.android.systemui/com.android.systemui.doze.DozeService</string>
 	<bool name="config_swipe_up_gesture_setting_available">true</bool>
 	<bool name="config_smart_battery_available">true</bool>
-	<dimen name="config_dialogCornerRadius">8.0dip</dimen>
-	<dimen name="config_buttonCornerRadius">4.0dip</dimen>
+
+	<!-- Round UI -->
+	<dimen name="config_dialogCornerRadius">28dp</dimen>
+	<dimen name="config_dialogCornerRadiusSmall">28.0dip</dimen>
+	<dimen name="config_buttonCornerRadius">28dp</dimen>
+	<dimen name="config_buttonCornerRadiusSmall">28.0dip</dimen>
+	<dimen name="rounded_slider_corner_radius">28dp</dimen>
+	<dimen name="rounded_slider_height">48dp</dimen>
+	<dimen name="rounded_slider_background_rounded_corner">28dp</dimen>
+	<dimen name="rounded_slider_track_corner_radius">28dp</dimen>
 
 
 	<bool name="config_cellBroadcastAppLinks">true</bool>
@@ -44,7 +52,17 @@
         <item>3</item>
     </array>
 
-    <bool name="config_supportAudioSourceUnprocessed">true</bool>
+	<!-- Whether to show min/max refresh rate in display settings -->
+	<bool name="config_show_refresh_rate_controls">true</bool>
+	<bool name="config_supports_dynamic_refresh_rate_controls">true</bool>
+
+	<!-- Whether the device supports Smart Pixels -->
+	<bool name="config_supportSmartPixels">true</bool>
+
+	<bool name="config_supportAudioSourceUnprocessed">true</bool>
+
+	<integer name="config_num_physical_slots">2</integer>
+
 
     <string-array name="config_packagesExemptFromSuspension" translatable="false">
 	    <item>me.phh.treble.app</item>
