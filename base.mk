@@ -54,7 +54,9 @@ PRODUCT_COPY_FILES += \
 
 # Charger image
 PRODUCT_PACKAGES += \
-    product_charger_res_images
+    product_charger_res_images \
+    charger_res_images
+
 
 # USB Audio
 PRODUCT_COPY_FILES += \
