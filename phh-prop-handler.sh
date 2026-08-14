@@ -477,9 +477,11 @@ if [ "$1" == "persist.sys.phh.scroll_boost" ]; then
     if [[ "$prop_value" == "true" ]]; then
         resetprop_phh persist.sys.perf.scroll_opt true
         resetprop_phh persist.sys.perf.scroll_opt.heavy_app 2
+        resetprop_phh ro.surface_flinger.uclamp.min 135
     else
         resetprop_phh --delete persist.sys.perf.scroll_opt
         resetprop_phh --delete persist.sys.perf.scroll_opt.heavy_app
+        resetprop_phh --delete ro.surface_flinger.uclamp.min
     fi
     exit
 fi
