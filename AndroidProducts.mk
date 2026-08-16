@@ -33,5 +33,6 @@ PRODUCT_MAKEFILES := \
 	$(LOCAL_DIR)/sakura_gsi.mk \
 	$(LOCAL_DIR)/bliss_gsi.mk \
 	$(LOCAL_DIR)/lynx_gsi.mk \
+	$(LOCAL_DIR)/circle_gsi.mk \
 
 
