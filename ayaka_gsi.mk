@@ -1,7 +1,7 @@
 TARGET_GAPPS_ARCH := arm64
 include build/make/target/product/aosp_arm64.mk
 $(call inherit-product, device/phh/treble/base.mk)
-$(call inherit-product, device/phh/treble/circle.mk)
+$(call inherit-product, device/phh/treble/ayaka.mk)
 
 PRODUCT_NAME := ayaka_gsi
 PRODUCT_DEVICE := tdgsi_arm64_ab
