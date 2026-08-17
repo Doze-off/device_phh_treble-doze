@@ -266,4 +266,8 @@ PRODUCT_EXTRA_VNDK_VERSIONS += 28 29 30
 
 $(call inherit-product, device/phh/treble/flags.mk)
 
--include vendor/doze-off-priv/keys/keys.mk
+-include vendor/dozeoff-priv/keys/keys.mk
+
+
+PRODUCT_PACKAGES += \
+    LatinIME
