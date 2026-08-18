@@ -486,20 +486,6 @@ if [ "$1" == "persist.sys.phh.scroll_boost" ]; then
     exit
 fi
 
-if [ "$1" == "persist.sys.phh.traffic_indicator_fallback" ]; then
-    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
-        exit 1
-    fi
-
-    if [[ "$prop_value" == "true" ]]; then
-        resetprop_phh ro.bpf.kver_override 5.10.239
-    else
-        resetprop_phh --delete ro.bpf.kver_override
-    fi
-
-    exit
-fi
-
 if [ "$1" == "persist.sys.phh.sf.background_blur" ]; then
     if [[ "$prop_value" != "disabled" && "$prop_value" != "gaussian" && "$prop_value" != "kawase" && "$prop_value" != "kawase2" && "$prop_value" != "kawase2_fix_aliasing" ]]; then
         exit 1
