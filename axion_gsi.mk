@@ -11,7 +11,7 @@ PRODUCT_MANUFACTURER := google
 PRODUCT_SYSTEM_MANUFACTURER := google
 
 PRODUCT_MODEL := Axion GSI TrebleDroid
-LINEAGE_BUILD := axion
+LINEAGE_BUILD := GSI-Dozeoff
 
 # Overwrite the inherited "emulator" characteristics
 PRODUCT_CHARACTERISTICS := device
