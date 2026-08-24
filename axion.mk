@@ -23,8 +23,6 @@ BYPASS_CHARGE_LEVEL_PATH := /sys/devices/platform/google,charger/charge_stop_lev
 
 PERF_GOV_SUPPORTED := true
 PERF_DEFAULT_GOV := schedutil
-HBM_SUPPORTED := true
-HBM_NODE := /sys/class/backlight/panel0-backlight/hbm_mode
 TORCH_STR_SUPPORTED := true
 TARGET_ENABLES_IMS_OVERRIDE := true
 TARGET_TOUCH_BOOST_SUPPORTED := false
