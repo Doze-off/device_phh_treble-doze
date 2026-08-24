@@ -1054,8 +1054,6 @@ if getprop ro.build.overlay.deviceid |grep -iq -e RMX2185 -e RMX1941 -e RMX1945 
     setprop persist.sys.overlay.devinputjack true
 fi
 
-resetprop_phh ro.bluetooth.library_name libbluetooth.so
-
 board="$(getprop ro.board.platform)"
 
 if [ "$board" = atoll ] || [ "$board" = sm6250 ]; then
@@ -1102,8 +1100,6 @@ if getprop ro.bionic.cpu_variant |grep -q kryo300;then
     setprop dalvik.vm.isa.arm64.variant cortex-a75
     setprop dalvik.vm.isa.arm64.features runtime
 fi
-
-resetprop_phh ro.control_privapp_permissions log
 
 if [ -f /vendor/etc/init/vendor.ozoaudio.media.c2@1.0-service.rc ];then
     if [ -n "$vndk" ] && [ "$vndk" -le 29 ]; then
@@ -1230,10 +1226,6 @@ fi
 if getprop ro.product.vendor.device | grep -q -e TECNO-LG8n; then
     chown -R system:system /sys/class/leds/vibrator_single/
 fi
-
-# Override media volume steps
-resetprop_phh ro.config.media_vol_steps 25
-resetprop_phh ro.config.media_vol_default 8
 
 # Force disable Sunlight Reading Mode to prevent weird color issues
 if getprop ro.vendor.build.fingerprint | grep -iq -e xiaomi/renoir; then
