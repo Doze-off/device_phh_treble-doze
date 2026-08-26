@@ -143,18 +143,22 @@ on property:persist.sys.phh.bluetooth_fix=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.bluetooth_fix"
 
 on property:persist.sys.activity_anim_perf_override=*
-     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.sf.predict_hwc_composition_strategy 0
+     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.sf.predict_hwc_composition_strategy 0
 
 on property:persist.sys.phh.prefer_hw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection aidl
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.prefer_hw_codecs"
 
-on property:persist.sys.phh.force_sw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 512
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+on property:persist.sys.phh.prefer_sw_codecs=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.prefer_sw_codecs"
+
+on property:persist.sys.phh.fix_screen_recorder=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.fix_screen_recorder"
+
+on property:persist.sys.phh.max_compatibility=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.max_compatibility"
+
+on property:persist.sys.phh.legacy_mode=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.legacy_mode"
 
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*

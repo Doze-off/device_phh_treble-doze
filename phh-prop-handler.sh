@@ -586,3 +586,82 @@ if [ "$1" == "persist.sys.phh.sf.debug.renderengine.backend" ]; then
 
     exit
 fi
+
+# Prefer HW codecs
+if [ "$1" == "persist.sys.phh.prefer_hw_codecs" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh -n debug.stagefright.ccodec 4
+        resetprop_phh -n debug.stagefright.omx_default_rank 0
+        resetprop_phh -n media.c2.hal.selection aidl
+    else
+        resetprop_phh --delete debug.stagefright.ccodec
+        resetprop_phh --delete debug.stagefright.omx_default_rank
+        resetprop_phh --delete media.c2.hal.selection
+    fi
+    exit
+fi
+
+# Prefer SW codecs
+if [ "$1" == "persist.sys.phh.prefer_sw_codecs" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh -n debug.stagefright.ccodec 0
+        resetprop_phh -n debug.stagefright.omx_default_rank 512
+    else
+        resetprop_phh --delete debug.stagefright.ccodec
+        resetprop_phh --delete debug.stagefright.omx_default_rank
+    fi
+    exit
+fi
+
+# Max compatibility
+if [ "$1" == "persist.sys.phh.max_compatibility" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh -n debug.stagefright.ccodec 4
+        resetprop_phh -n debug.stagefright.omx_default_rank 512
+        resetprop_phh -n media.c2.hal.selection ""
+    else
+        resetprop_phh --delete debug.stagefright.ccodec
+        resetprop_phh --delete debug.stagefright.omx_default_rank
+        resetprop_phh --delete media.c2.hal.selection
+    fi
+    exit
+fi
+
+# Fix screen recorder
+if [ "$1" == "persist.sys.phh.fix_screen_recorder" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh -n debug.stagefright.ccodec 4
+        resetprop_phh -n debug.stagefright.omx_default_rank 256
+    else
+        resetprop_phh --delete debug.stagefright.ccodec
+        resetprop_phh --delete debug.stagefright.omx_default_rank
+    fi
+    exit
+fi
+
+# Fix screen recorder
+if [ "$1" == "persist.sys.phh.legacy_mode" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        resetprop_phh -n debug.stagefright.ccodec 0
+        resetprop_phh -n debug.stagefright.omx_default_rank 0
+    else
+        resetprop_phh --delete debug.stagefright.ccodec
+        resetprop_phh --delete debug.stagefright.omx_default_rank
+    fi
+    exit
+fi
