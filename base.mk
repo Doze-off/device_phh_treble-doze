@@ -211,6 +211,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     debug.stagefright.c2inputsurface=-1 \
     debug.stagefright.ccodec=4 \
     debug.stagefright.omx_default_rank=0 \
+    media.c2.hal.selection= \
     persist.sys.fflag.override.settings_provider_model=false \
     ro.setupwizard.mode=OPTIONAL \
 
