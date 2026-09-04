@@ -1,10 +1,11 @@
 # Disables compression for APEX modules in the product.
-PRODUCT_COMPRESSED_APEX := false
+PRODUCT_COMPRESSED_APEX := true
 
 # Enables insecure ADB (root ADB access without authentication, depending on build configuration).
 WITH_ADB_INSECURE := true
 
-TARGET_NEEDS_VULKAN_MEDIA_FIX := true
+TARGET_USES_VULKAN := false
+TARGET_NEEDS_VULKAN_MEDIA_FIX := false
 
 # Adds product-specific properties for the /product partition.
 TARGET_PRODUCT_PROP += device/phh/treble/product.prop
