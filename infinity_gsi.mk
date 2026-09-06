@@ -11,10 +11,9 @@ PRODUCT_MANUFACTURER := google
 PRODUCT_SYSTEM_MANUFACTURER := google
 
 PRODUCT_MODEL := Infinity X GSI TrebleDroid
-LINEAGE_BUILD := infinity
+LINEAGE_BUILD := GSI-Dozeoff
 
 # Overwrite the inherited "emulator" characteristics
 PRODUCT_CHARACTERISTICS := device
-
 WITH_GAPPS := true
 
