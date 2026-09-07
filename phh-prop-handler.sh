@@ -381,7 +381,7 @@ if [ "$1" == "persist.sys.phh.axion_props" ]; then
         #axion props
         # set threshold to filter unused apps
         resetprop_phh pm.dexopt.downgrade_after_inactive_days 10
-        resetprop_phh pm.dexopt.boot-after-ota speed-profile
+        resetprop_phh pm.dexopt.boot-after-ota speed
 
         resetprop_phh dalvik.vm.enable_pr_dexopt true
         resetprop_phh dalvik.vm.finalizer-timeout-ms 40000
