@@ -273,4 +273,6 @@ $(call inherit-product, device/phh/treble/flags.mk)
 
 
 PRODUCT_PACKAGES += \
-    LatinIME
+    LatinIME \
+    Jelly \
+    SoundPicker
