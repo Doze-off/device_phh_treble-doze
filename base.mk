@@ -215,6 +215,28 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.sys.fflag.override.settings_provider_model=false \
     ro.setupwizard.mode=OPTIONAL \
 
+PRODUCT_SYSTEM_PROPERTIES += \
+    pm.dexopt.first-boot=speed \
+    pm.dexopt.post-boot=speed \
+    pm.dexopt.boot=speed \
+    pm.dexopt.boot-after-ota=speed \
+    pm.dexopt.boot-after-mainline-update=speed \
+    pm.dexopt.ab-ota=speed \
+    pm.dexopt.install=speed \
+    pm.dexopt.install-bulk=speed \
+    pm.dexopt.install-bulk-secondary=speed \
+    pm.dexopt.bg-dexopt=speed \
+    pm.dexopt.core-app=speed \
+    pm.dexopt.shared-apk=speed \
+    pm.dexopt.shared=speed \
+    pm.dexopt.nsys-library=speed \
+    pm.dexopt.forced-dexopt=speed \
+    dalvik.vm.dex2oat-filter=speed \
+    dalvik.vm.image-dex2oat-filter=speed \
+    dalvik.vm.systemservercompilerfilter=speed \
+    dalvik.vm.systemuicompilerfilter=speed \
+    ro.surface_flinger.game_default_frame_rate_override=120
+
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.setupwizard.mode=OPTIONAL \
 

@@ -73,23 +73,6 @@ debug.sf.no_vsyncs_on_screen_off=false
 
 ro.hwui.use_vulkan?=0
 
-# Speed ​​dexopt for all reasons
-pm.dexopt.first-boot=speed
-pm.dexopt.install=speed
-pm.dexopt.install-bulk=speed
-pm.dexopt.bg-dexopt=speed
-pm.dexopt.boot=speed
-pm.dexopt.boot-after-ota=speed
-pm.dexopt.ab-ota=speed
-pm.dexopt.core-app=speed
-pm.dexopt.shared-apk=speed
-pm.dexopt.nsys-library=speed
-pm.dexopt.forced-dexopt=speed
-
-# General ART filters
-dalvik.vm.dex2oat-filter=speed
-dalvik.vm.image-dex2oat-filter=speed
-dalvik.vm.systemservercompilerfilter=speed
-dalvik.vm.systemuicompilerfilter=speed
+persist.sys.activity_anim_perf_override?=0
 
 
