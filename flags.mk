@@ -1,5 +1,6 @@
 # Disables compression for APEX modules in the product.
 PRODUCT_COMPRESSED_APEX := true
+TARGET_FLATTEN_APEX := false
 WITH_DEXPREOPT := false
 
 # Enables insecure ADB (root ADB access without authentication, depending on build configuration).
