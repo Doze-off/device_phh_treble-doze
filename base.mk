@@ -235,7 +235,6 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-filter=speed \
     dalvik.vm.systemservercompilerfilter=speed \
     dalvik.vm.systemuicompilerfilter=speed \
-    ro.surface_flinger.game_default_frame_rate_override=120
 
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.setupwizard.mode=OPTIONAL \
