@@ -25,7 +25,7 @@ PRODUCT_MAKEFILES := \
 	$(LOCAL_DIR)/aicp_gsi.mk \
 	$(LOCAL_DIR)/pixelos_gsi.mk \
 	$(LOCAL_DIR)/lineage_gsi.mk \
-	$(LOCAL_DIR)/mistos_gsi.mk \
+	$(LOCAL_DIR)/mist_gsi.mk \
 	$(LOCAL_DIR)/sakura_gsi.mk \
 	$(LOCAL_DIR)/bliss_gsi.mk \
 	$(LOCAL_DIR)/lynx_gsi.mk \
