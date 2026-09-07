@@ -92,6 +92,4 @@ dalvik.vm.image-dex2oat-filter=speed
 dalvik.vm.systemservercompilerfilter=speed
 dalvik.vm.systemuicompilerfilter=speed
 
-# force 100% AOT
-dalvik.vm.usejit=false
 
