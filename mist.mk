@@ -7,6 +7,7 @@ $(call inherit-product, device/lineage/sepolicy/common/sepolicy.mk)
 
 TARGET_BOOT_ANIMATION_RES := 720
 TARGET_DISABLE_EPPE := true
+TARGET_HAS_UDFPS := false
 
 MISTOS_MAINTAINER := Doze-off
 MIST_BUILD_TYPE := OFFICIAL
