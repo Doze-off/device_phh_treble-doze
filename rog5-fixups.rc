@@ -1,0 +1,16 @@
+# ASUS ROG Phone 5/5s (ASUS_I005D/ASUS_I005_1) hardware fixups.
+#
+# ASUS's own vendor/etc/init/hw/init.asus.rc chowns/relabels the touch IC's
+# rise_report_rate and edge_settings attributes to system:system +
+# vendor_sysfs_touch (confirmed live via ls -laZ), letting system_app write
+# them directly - but it doesn't do the same for fts_game_mode, an apparent
+# gap in ASUS's own script. Since that's on /vendor and can't be patched
+# from here, this compensates for it on the /system side instead, matching
+# the same target ownership/mode ASUS uses for its sibling attributes.
+# Paired with the genfs_contexts relabel to vendor_sysfs_touch (same
+# sepolicy/genfs_contexts) - DAC alone isn't enough, both are needed for
+# system_app to actually be able to write it.
+on boot
+    chown system system /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
+    chmod 0664 /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
+    restorecon /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
