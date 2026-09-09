@@ -109,6 +109,15 @@ if [ "$1" == "persist.sys.phh.oppo.dt2w" ]; then
     exit
 fi
 
+if [ "$1" == "persist.sys.phh.oppo.dc_dimming" ]; then
+    if [[ "$prop_value" != "0" && "$prop_value" != "1" ]]; then
+        exit 1
+    fi
+
+    echo "$prop_value" >/sys/kernel/oppo_display/dimlayer_bl_en
+    exit
+fi
+
 if [ "$1" == "persist.sys.phh.oppo.gaming_mode" ]; then
     if [[ "$prop_value" != "0" && "$prop_value" != "1" ]]; then
         exit 1
