@@ -219,12 +219,21 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.sys.fflag.override.settings_provider_model=false \
     ro.setupwizard.mode=OPTIONAL \
 
+# Balanced dexopt configuration: faster boot with progressive full AOT optimization.
+# - Boot-related reasons (first-boot, post-boot, boot, boot-after-ota, boot-after-mainline-update)
+#   use speed-profile to pre-optimize hot methods without significantly slowing down boot.
+# - Install, background dexopt, core apps, shared APKs, system libraries, and system components
+#   use full speed AOT compilation for maximum runtime performance.
+# - Increased dex2oat threads to speed up both boot and background optimization.
+#
+# Result: reasonably fast first boot, reduced background dexopt work, and full speed performance
+# once optimization completes.
 PRODUCT_SYSTEM_PROPERTIES += \
-    pm.dexopt.first-boot=speed \
-    pm.dexopt.post-boot=speed \
-    pm.dexopt.boot=speed \
-    pm.dexopt.boot-after-ota=speed \
-    pm.dexopt.boot-after-mainline-update=speed \
+    pm.dexopt.first-boot=speed-profile \
+    pm.dexopt.post-boot=speed-profile \
+    pm.dexopt.boot=speed-profile \
+    pm.dexopt.boot-after-ota=speed-profile \
+    pm.dexopt.boot-after-mainline-update=speed-profile \
     pm.dexopt.ab-ota=speed \
     pm.dexopt.install=speed \
     pm.dexopt.install-bulk=speed \
@@ -239,6 +248,9 @@ PRODUCT_SYSTEM_PROPERTIES += \
     dalvik.vm.image-dex2oat-filter=speed \
     dalvik.vm.systemservercompilerfilter=speed \
     dalvik.vm.systemuicompilerfilter=speed \
+    dalvik.vm.boot-dex2oat-threads=8 \
+    dalvik.vm.dex2oat-threads=8 \
+    dalvik.vm.image-dex2oat-threads=8
 
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.setupwizard.mode=OPTIONAL \
