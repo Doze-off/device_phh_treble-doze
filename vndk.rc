@@ -51,6 +51,9 @@ on property:persist.sys.phh.securize=*
 on property:persist.sys.phh.oppo.usbotg=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.oppo.usbotg"
 
+on property:persist.sys.phh.oppo.dc_dimming=*
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.oppo.dc_dimming"
+
 on property:persist.sys.phh.transsion.usbotg=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.transsion.usbotg"
 
