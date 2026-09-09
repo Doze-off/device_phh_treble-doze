@@ -10,7 +10,19 @@
 # Paired with the genfs_contexts relabel to vendor_sysfs_touch (same
 # sepolicy/genfs_contexts) - DAC alone isn't enough, both are needed for
 # system_app to actually be able to write it.
-on boot
+#
+# Verified live: the sepolicy half of this fix landed and correctly
+# relabels fts_game_mode to vendor_sysfs_touch, but DAC ownership was still
+# root:root after boot - this file was present and its content correct, so
+# the chown/chmod actions just never actually applied. This touch IC's i2c
+# bus (990000.i2c) shows real GSI QN/xfer-timeout errors in dmesg well past
+# early boot on this unit, so the "on boot" trigger (which fires before
+# many late-probing peripherals finish) most likely ran before this
+# specific sysfs attribute existed - chown/chmod on a path that doesn't
+# exist yet silently no-ops. Moved to sys.boot_completed=1, the latest
+# point in the standard boot trigger sequence, to guarantee the node
+# exists by the time this runs.
+on property:sys.boot_completed=1
     chown system system /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
     chmod 0664 /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
     restorecon /sys/devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode
