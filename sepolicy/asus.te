@@ -8,3 +8,5 @@ type vendor_sysfs_graphics, file_type;
 allow platform_app vendor_sysfs_graphics:dir r_dir_perms;
 allow platform_app vendor_sysfs_graphics:file r_file_perms;
 
+type vendor_sysfs_touch, fs_type, sysfs_type;
+
