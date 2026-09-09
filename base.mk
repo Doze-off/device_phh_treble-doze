@@ -52,6 +52,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/phh/treble/charger.rc:system/etc/init/charger.rc
 
+# ASUS ROG Phone 5/5s hardware fixups (see rog5-fixups.rc)
+PRODUCT_COPY_FILES += \
+    device/phh/treble/rog5-fixups.rc:system/etc/init/rog5-fixups.rc
+
 # Charger image
 PRODUCT_PACKAGES += \
     product_charger_res_images \

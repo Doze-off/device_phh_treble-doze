@@ -1,3 +1,18 @@
 genfscon sysfs /board_properties u:object_r:sysfs_board_properties:s0
 
 genfscon sysfs /devices/platform/soc/soc:mtk_leds/leds u:object_r:sysfs_leds:s0
+
+# ASUS ROG Phone 5/5s (ASUS_I005D/ASUS_I005_1) Aura Sync RGB MCU (phone-body
+# zone). Verified live: system_app writes to this path fail with EACCES and
+# zero avc denial logged (consistent with a paired dontaudit) until
+# relabeled to the same sysfs_leds type already used above for a different
+# device's LED path, plus the matching allow in sepolicy/treble_app.te.
+genfscon sysfs /devices/platform/soc/980000.i2c/i2c-0/0-0016/leds u:object_r:sysfs_leds:s0
+
+# ASUS ROG Phone 5/5s touch IC (X Mode gaming touch). rise_report_rate and
+# edge_settings on this same node are already vendor_sysfs_touch (ASUS's own
+# vendor/etc/init/hw/init.asus.rc relabels them) and work today - this just
+# extends the same existing type to fts_game_mode, which that script leaves
+# out. Paired with rog5-fixups.rc for the matching DAC (system:system 0664)
+# fix - the generic sysfs default here is root:root 0644.
+genfscon sysfs /devices/platform/soc/990000.i2c/i2c-2/2-0038/fts_game_mode u:object_r:vendor_sysfs_touch:s0

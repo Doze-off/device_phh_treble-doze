@@ -39,3 +39,11 @@ binder_call(system_app, hal_gesturewake_default);
 
 type hal_aidl_agolddaemon_default, domain;
 binder_call(system_app, hal_aidl_agolddaemon_default);
+
+# ASUS ROG Phone 5/5s Aura Sync RGB (see sepolicy/genfs_contexts for the
+# matching sysfs_leds relabel of the actual MCU path). Verified live:
+# writes fail with EACCES and no avc denial (consistent with a paired
+# dontaudit) without this - setenforce 0 made the identical write succeed,
+# isolating the cause to this missing allow rather than DAC or the driver.
+allow system_app sysfs_leds:dir r_dir_perms;
+allow system_app sysfs_leds:file rw_file_perms;
