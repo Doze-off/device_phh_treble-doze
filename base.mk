@@ -331,3 +331,5 @@ PRODUCT_PACKAGES += \
     LatinIME \
     Jelly \
     SoundPicker
+
+PRODUCT_PACKAGES := $(filter-out Seedvault Twelve,$(PRODUCT_PACKAGES))
