@@ -148,20 +148,60 @@ on property:persist.sys.phh.bluetooth_fix=*
 on property:persist.sys.activity_anim_perf_override=*
      exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.sf.predict_hwc_composition_strategy 0
 
+# Prefer HW codecs (vendor HIDL C2 + OMX, default behavior)
+# - ccodec=4: all C2 components available at normal ranks
+# - omx_default_rank=0: OMX at default rank (0x100)
+# - hal.selection=hidl: use vendor HIDL C2 HAL
+# - c2inputsurface=-1: enable all input surface backends (HW C2, OMX, SW C2)
 on property:persist.sys.phh.prefer_hw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.prefer_hw_codecs"
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
 
+# Prefer SW codecs (force c2.android.* only, like doissM's CodecFix)
+# - ccodec=4: all C2 components available
+# - omx_default_rank=0: demote all OMX below C2 SW (rank 0x200)
+# - hal.selection=aidl: use AIDL C2 HAL (system-side c2.android.*)
+# - c2inputsurface=-1: enable all input surface backends
 on property:persist.sys.phh.prefer_sw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.prefer_sw_codecs"
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection aidl
 
+# Fix screen recorder (intermediate OMX rank to help some vendors)
+# - ccodec=4: C2 components available
+# - omx_default_rank=256: OMX ranked between SW C2 (0x200) and default (0x100)
+# - hal.selection=hidl: keep vendor HIDL C2 HAL
+# - c2inputsurface=-1: enable all input surface backends
 on property:persist.sys.phh.fix_screen_recorder=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.fix_screen_recorder"
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 256
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
 
+# Max compatibility (force legacy OMX path for maximum vendor compatibility)
+# - ccodec=0: only OMX components available (disable C2)
+# - omx_default_rank=512: high priority for OMX (vendor HW codecs first)
+# - hal.selection=hidl: use vendor HIDL C2 HAL (though C2 is disabled by ccodec=0)
+# - c2inputsurface=-1: enable all input surface backends
 on property:persist.sys.phh.max_compatibility=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.max_compatibility"
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 512
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
 
+# Legacy mode (force OMX legacy path, normal rank)
+# - ccodec=0: only OMX components available (disable C2)
+# - omx_default_rank=0: OMX at default rank (0x100)
+# - hal.selection=hidl: use vendor HIDL C2 HAL (though C2 is disabled by ccodec=0)
+# - c2inputsurface=-1: enable all input surface backends
 on property:persist.sys.phh.legacy_mode=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.legacy_mode"
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
 
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*
