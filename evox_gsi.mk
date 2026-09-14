@@ -10,8 +10,8 @@ PRODUCT_SYSTEM_BRAND := google
 PRODUCT_MANUFACTURER := google
 PRODUCT_SYSTEM_MANUFACTURER := google
 
-PRODUCT_MODEL := Evolution-X Treble
-LINEAGE_BUILD := evolution
+PRODUCT_MODEL := Evolution X GSI TrebleDroid
+LINEAGE_BUILD := GSI-Dozeoff
 
 # Overwrite the inherited "emulator" characteristics
 PRODUCT_CHARACTERISTICS := device
