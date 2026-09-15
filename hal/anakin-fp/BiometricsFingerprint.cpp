@@ -220,7 +220,7 @@ static bool readBoolPath(const char* path, bool* readable) {
     return value[0] != '0';
 }
 
-static bool hbmAchieved() {
+static bool __attribute__((unused)) hbmAchieved() {
     bool ghbmReadable = false;
     bool spotReadable = false;
     const bool ghbm = readBoolPath(GHBM_ACHIEVED_PATH, &ghbmReadable);
