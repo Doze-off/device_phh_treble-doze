@@ -6,6 +6,15 @@ on post-fs
 
     start watchdogd-gsi
 
+    # Clear old persistent codec properties to prevent conflicts
+    # Remove previously saved values that may overwrite new configurations
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.prefer_hw_codecs
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.prefer_sw_codecs
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.fix_screen_recorder
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.max_compatibility
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.legacy_mode
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.max_performance
+
 on property:vold.decrypt=trigger_restart_framework
     exec - root -- /system/bin/phh-on-data.sh
 
@@ -145,63 +154,101 @@ on property:persist.sys.phh.axion_props=*
 on property:persist.sys.phh.bluetooth_fix=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.bluetooth_fix"
 
-on property:persist.sys.activity_anim_perf_override=*
+on property:persist.sys.activity_anim_perf_override=true
      exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.sf.predict_hwc_composition_strategy 0
 
 # Prefer HW codecs (vendor HIDL C2 + OMX, default behavior)
-# - ccodec=4: all C2 components available at normal ranks
-# - omx_default_rank=0: OMX at default rank (0x100)
-# - hal.selection=hidl: use vendor HIDL C2 HAL
-# - c2inputsurface=-1: enable all input surface backends (HW C2, OMX, SW C2)
-on property:persist.sys.phh.prefer_hw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
+# BEST FOR PERFORMANCE - Recommended for most devices
+# - ccodec=4: All C2 components available at normal ranks (C2 + OMX)
+# - omx_default_rank=0: OMX at maximum priority (rank 0x0, first choice)
+# - hal.selection=hidl: Use vendor HIDL C2 HAL for hardware acceleration
+# - c2inputsurface=-1: Enable all input surface backends (HW C2, OMX, SW C2)
+# Performance: ⭐⭐⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐ | CPU Usage: Low | Battery: Excellent
+# Use this mode if video recording works normally on your device
+on property:persist.sys.phh.prefer_hw_codecs=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
 
 # Prefer SW codecs (force c2.android.* only, like doissM's CodecFix)
-# - ccodec=4: all C2 components available
-# - omx_default_rank=0: demote all OMX below C2 SW (rank 0x200)
-# - hal.selection=aidl: use AIDL C2 HAL (system-side c2.android.*)
-# - c2inputsurface=-1: enable all input surface backends
-on property:persist.sys.phh.prefer_sw_codecs=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection aidl
+# USE ONLY IF HW CODECS FAIL - Higher CPU usage but more compatible
+# - ccodec=4: All C2 components available (C2 + OMX)
+# - omx_default_rank=0: OMX at maximum priority (rank 0x0)
+# - hal.selection=aidl: Use AIDL C2 HAL (system-side c2.android.* software codecs)
+# - c2inputsurface=-1: Enable all input surface backends
+# Performance: ⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐⭐ | CPU Usage: High | Battery: Fair
+# Enable ONLY if video recording crashes, hangs, or produces corrupted files with HW codecs
+# WARNING: Significantly higher CPU usage and battery drain
+on property:persist.sys.phh.prefer_sw_codecs=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection aidl
 
 # Fix screen recorder (intermediate OMX rank to help some vendors)
-# - ccodec=4: C2 components available
-# - omx_default_rank=256: OMX ranked between SW C2 (0x200) and default (0x100)
-# - hal.selection=hidl: keep vendor HIDL C2 HAL
-# - c2inputsurface=-1: enable all input surface backends
-on property:persist.sys.phh.fix_screen_recorder=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 4
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 256
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
+# FOR SCREEN RECORDING ISSUES ONLY - Compatibility mode for input surface
+# - ccodec=4: All C2 components available (C2 + OMX)
+# - omx_default_rank=256: OMX at standard rank (0x100, balanced with C2 SW)
+# - hal.selection=hidl: Use vendor HIDL C2 HAL
+# - c2inputsurface=-1: Enable all input surface backends
+# Performance: ⭐⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐⭐ | CPU Usage: Medium | Battery: Good
+# Enable if screen recorder shows black screen, crashes, or fails to start
+# This mode prioritizes software codecs for input surface creation
+on property:persist.sys.phh.fix_screen_recorder=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 256
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
 
-# Max compatibility (force legacy OMX path for maximum vendor compatibility)
-# - ccodec=0: only OMX components available (disable C2)
-# - omx_default_rank=512: high priority for OMX (vendor HW codecs first)
-# - hal.selection=hidl: use vendor HIDL C2 HAL (though C2 is disabled by ccodec=0)
-# - c2inputsurface=-1: enable all input surface backends
-on property:persist.sys.phh.max_compatibility=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 512
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
+# Max compatibility (C2 enabled, but OMX prioritized for maximum compatibility)
+# BALANCED MODE - C2 available but OMX preferred for old devices
+# - ccodec=4: All C2 components available (C2 + OMX work together)
+# - omx_default_rank=512: OMX at lower priority (0x200, below C2 software but still used)
+# - hal.selection=hidl: Use vendor HIDL C2 HAL
+# - c2inputsurface=-1: Enable all input surface backends
+# Performance: ⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐⭐ | CPU Usage: Medium-High | Battery: Fair
+# Enable if video recording or screen recorder fails with other modes
+# Good for older devices (Android 10-) or devices with buggy C2 implementation
+# C2 is available as fallback, but OMX codecs are preferred
+on property:persist.sys.phh.max_compatibility=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 512
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
 
-# Legacy mode (force OMX legacy path, normal rank)
-# - ccodec=0: only OMX components available (disable C2)
-# - omx_default_rank=0: OMX at default rank (0x100)
-# - hal.selection=hidl: use vendor HIDL C2 HAL (though C2 is disabled by ccodec=0)
-# - c2inputsurface=-1: enable all input surface backends
-on property:persist.sys.phh.legacy_mode=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.c2inputsurface -1
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.ccodec 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n debug.stagefright.omx_default_rank 0
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh -n media.c2.hal.selection hidl
+# Legacy mode (force OMX legacy path, C2 disabled)
+# FOR ANDROID 9 OR BOOTLOOPS ONLY - Disables Codec2 completely
+# - ccodec=0: Only OMX components available (C2 completely disabled)
+# - omx_default_rank=0: OMX at maximum priority (rank 0x0, only option)
+# - hal.selection=hidl: Use vendor HIDL C2 HAL (though C2 is disabled by ccodec=0)
+# - c2inputsurface=-1: Enable all input surface backends
+# Performance: ⭐⭐ | Compatibility: ⭐⭐⭐⭐ | CPU Usage: High | Battery: Poor
+# Enable ONLY for Android 9 or older devices
+# Use if C2 causes bootloop, system crash, or severe instability
+# WARNING: Slowest mode, highest CPU usage, avoid unless necessary
+on property:persist.sys.phh.legacy_mode=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
+
+# Max performance (C2 hardware first, OMX as last resort)
+# MAXIMUM PERFORMANCE - For modern devices with stable C2 implementation
+# - ccodec=4: All C2 components available (C2 + OMX)
+# - omx_default_rank=1024: OMX at very low priority (0x400, last resort)
+# - hal.selection=hidl: Use vendor HIDL C2 HAL for maximum hardware acceleration
+# - c2inputsurface=-1: Enable all input surface backends
+# Performance: ⭐⭐⭐⭐⭐ | Compatibility: ⭐⭐⭐ | CPU Usage: Lowest | Battery: Best
+# Enable ONLY for Android 11+ devices with stable C2 implementation
+# Use if you want maximum encoding speed and battery efficiency
+# WARNING: May cause compatibility issues on older devices or buggy C2 implementations
+on property:persist.sys.phh.max_performance=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 1024
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
+
 
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*
