@@ -612,3 +612,247 @@ if [ "$1" == "persist.sys.phh.sf.debug.renderengine.backend" ]; then
 
     exit
 fi
+
+# Performance Tweaks Handler
+if [ "$1" == "persist.sys.phh.performance_tweaks" ]; then
+    # Check if LMK Tweaks is enabled - CONFLICT DETECTION
+    lmk_status=$(getprop persist.sys.phh.lmk_tweaks)
+    if [[ "$lmk_status" == "true" && "$prop_value" == "true" ]]; then
+        echo "WARNING: Performance Tweaks conflicts with LMK Tweaks!"
+        echo "Disabling LMK Tweaks automatically..."
+        setprop persist.sys.phh.lmk_tweaks false
+        # Reset LMK props
+        resetprop_phh --delete ro.lmk.use_minfree_levels
+        resetprop_phh --delete ro.lmk.kill_timeout_ms
+        resetprop_phh --delete ro.lmk.low
+        resetprop_phh --delete ro.lmk.medium
+        resetprop_phh --delete ro.lmk.critical
+        resetprop_phh --delete ro.lmk.kill_heaviest_task
+        resetprop_phh --delete ro.lmk.critical_upgrade
+        resetprop_phh --delete ro.lmk.upgrade_pressure
+        resetprop_phh --delete ro.lmk.downgrade_pressure
+        resetprop_phh --delete ro.lmk.psi_partial_stall_ms
+        resetprop_phh --delete ro.lmk.psi_complete_stall_ms
+        resetprop_phh --delete ro.sys.fw.bg_apps_limit
+        resetprop_phh --delete ro.config.max_starting_bg
+        setprop ctl.restart lmkd
+        echo "[Performance] LMK Tweaks disabled due to conflict"
+    fi
+
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        # ===== DALVIK/ART HEAP & GC OPTIMIZATIONS =====
+        # Heap configuration for better memory management
+        resetprop_phh dalvik.vm.heapgrowthlimit 256m
+        resetprop_phh dalvik.vm.heapgrowthstart 16m
+        resetprop_phh dalvik.vm.heapmaxfree 64m
+        resetprop_phh dalvik.vm.heapminfree 8m
+        resetprop_phh dalvik.vm.heapsize 512m
+        resetprop_phh dalvik.vm.heaptargetutilization 0.75
+
+        # GC and threading optimizations
+        resetprop_phh dalvik.vm.finalizer-timeout-ms 30000
+        resetprop_phh dalvik.vm.threadpool-size 4
+        resetprop_phh dalvik.vm.gc-start-threads 4
+
+        # ===== SURFACEFLINGER OPTIMIZATIONS =====
+        resetprop_phh ro.surface_flinger.uclamp.min 100
+        resetprop_phh ro.surface_flinger.uclamp.max 1024
+        resetprop_phh ro.surface_flinger.set_idle_timer_ms 100
+        resetprop_phh ro.surface_flinger.set_touch_timer_ms 200
+        resetprop_phh ro.surface_flinger.max_frame_buffer_acquired_buffers 4
+        resetprop_phh ro.surface_flinger.max_num_layers 384
+        resetprop_phh debug.sf.vsync_reactor_ignore_present_fences false
+        resetprop_phh debug.sf.latch_unsignaled 1
+        resetprop_phh debug.sf.enable_gl_backpressure 1
+        resetprop_phh debug.sf.enable_hwc_backpressure 1
+
+        # ===== I/O AND STORAGE OPTIMIZATIONS =====
+        resetprop_phh sys.io.scheduler cfq
+        resetprop_phh sys.block.mmcblk.queue.read_ahead_kb 128
+        resetprop_phh sys.block.sda.queue.read_ahead_kb 256
+        resetprop_phh vm.dirty_ratio 20
+        resetprop_phh vm.dirty_background_ratio 10
+        resetprop_phh vm.vfs_cache_pressure 100
+        resetprop_phh vm.swappiness 10
+        resetprop_phh vm.min_free_kbytes 76800
+
+        # ===== NETWORK OPTIMIZATIONS =====
+        resetprop_phh net.tcp.2g.rmem_min 16384
+        resetprop_phh net.tcp.3g.rmem_min 262144
+        resetprop_phh net.tcp.4g.rmem_min 524288
+        resetprop_phh net.tcp.wifi.rmem_min 1048576
+        resetprop_phh net.core.rmem_max 16777216
+        resetprop_phh net.core.wmem_max 16777216
+        resetprop_phh net.core.netdev_max_backlog 5000
+        resetprop_phh net.core.somaxconn 4096
+
+        # ===== CPU/GPU OPTIMIZATIONS =====
+        resetprop_phh ro.sys.fw.dex2oat_thread_count 8
+        resetprop_phh ro.sys.fw.bcache_enable true
+        resetprop_phh ro.opengles.version 196610
+        resetprop_phh debug.egl.hw 1
+        resetprop_phh debug.sf.hw 1
+
+        echo "[Performance] All performance tweaks applied successfully"
+    else
+        # ===== RESET ALL PERFORMANCE PROPS =====
+        # Dalvik/ART
+        resetprop_phh --delete dalvik.vm.heapgrowthlimit
+        resetprop_phh --delete dalvik.vm.heapgrowthstart
+        resetprop_phh --delete dalvik.vm.heapmaxfree
+        resetprop_phh --delete dalvik.vm.heapminfree
+        resetprop_phh --delete dalvik.vm.heapsize
+        resetprop_phh --delete dalvik.vm.heaptargetutilization
+        resetprop_phh --delete dalvik.vm.finalizer-timeout-ms
+        resetprop_phh --delete dalvik.vm.threadpool-size
+        resetprop_phh --delete dalvik.vm.gc-start-threads
+
+        # SurfaceFlinger
+        resetprop_phh --delete ro.surface_flinger.uclamp.min
+        resetprop_phh --delete ro.surface_flinger.uclamp.max
+        resetprop_phh --delete ro.surface_flinger.set_idle_timer_ms
+        resetprop_phh --delete ro.surface_flinger.set_touch_timer_ms
+        resetprop_phh --delete ro.surface_flinger.max_frame_buffer_acquired_buffers
+        resetprop_phh --delete ro.surface_flinger.max_num_layers
+        resetprop_phh --delete debug.sf.vsync_reactor_ignore_present_fences
+        resetprop_phh --delete debug.sf.latch_unsignaled
+        resetprop_phh --delete debug.sf.enable_gl_backpressure
+        resetprop_phh --delete debug.sf.enable_hwc_backpressure
+
+        # I/O
+        resetprop_phh --delete sys.io.scheduler
+        resetprop_phh --delete sys.block.mmcblk.queue.read_ahead_kb
+        resetprop_phh --delete sys.block.sda.queue.read_ahead_kb
+        resetprop_phh --delete vm.dirty_ratio
+        resetprop_phh --delete vm.dirty_background_ratio
+        resetprop_phh --delete vm.vfs_cache_pressure
+        resetprop_phh --delete vm.swappiness
+        resetprop_phh --delete vm.min_free_kbytes
+
+        # Network
+        resetprop_phh --delete net.tcp.2g.rmem_min
+        resetprop_phh --delete net.tcp.3g.rmem_min
+        resetprop_phh --delete net.tcp.4g.rmem_min
+        resetprop_phh --delete net.tcp.wifi.rmem_min
+        resetprop_phh --delete net.core.rmem_max
+        resetprop_phh --delete net.core.wmem_max
+        resetprop_phh --delete net.core.netdev_max_backlog
+        resetprop_phh --delete net.core.somaxconn
+
+        # CPU/GPU
+        resetprop_phh --delete ro.sys.fw.dex2oat_thread_count
+        resetprop_phh --delete ro.sys.fw.bcache_enable
+        resetprop_phh --delete ro.opengles.version
+        resetprop_phh --delete debug.egl.hw
+        resetprop_phh --delete debug.sf.hw
+
+        echo "[Performance] All performance tweaks reset to default"
+    fi
+    exit
+fi
+
+# Aggressive DEXOPT Handler - ONLY DEXOPT PROPS
+if [ "$1" == "persist.sys.phh.dexopt_aggressive" ]; then
+    if [[ "$prop_value" != "false" && "$prop_value" != "true" ]]; then
+        exit 1
+    fi
+    if [[ "$prop_value" == "true" ]]; then
+        # ===== AGGRESSIVE DEXOPT MODE - ALL pm.dexopt.* PROPS =====
+
+        # Boot scenarios
+        resetprop_phh pm.dexopt.boot speed
+        resetprop_phh pm.dexopt.post-boot speed
+        resetprop_phh pm.dexopt.first-boot speed
+        resetprop_phh pm.dexopt.boot-after-ota speed
+        resetprop_phh pm.dexopt.boot-after-mainline-update speed
+
+        # Install scenarios
+        resetprop_phh pm.dexopt.install speed
+        resetprop_phh pm.dexopt.install-fast speed
+        resetprop_phh pm.dexopt.install-bulk speed
+        resetprop_phh pm.dexopt.install-bulk-secondary speed
+        resetprop_phh pm.dexopt.install-bulk-downgraded speed
+        resetprop_phh pm.dexopt.install-bulk-secondary-downgraded speed
+
+        # Background and other scenarios
+        resetprop_phh pm.dexopt.bg-dexopt speed
+        resetprop_phh pm.dexopt.core-app speed
+        resetprop_phh pm.dexopt.shared-apk speed
+        resetprop_phh pm.dexopt.shared speed
+        resetprop_phh pm.dexopt.nsys-library speed
+        resetprop_phh pm.dexopt.forced-dexopt speed
+        resetprop_phh pm.dexopt.ab-ota speed
+        resetprop_phh pm.dexopt.inactive speed
+        resetprop_phh pm.dexopt.cmdline speed
+        resetprop_phh pm.dexopt.first-use speed
+        resetprop_phh pm.dexopt.secondary speed
+
+        # System server and UI filters
+        resetprop_phh dalvik.vm.systemservercompilerfilter speed
+        resetprop_phh dalvik.vm.systemuicompilerfilter speed
+
+        # DEXOPT control flags
+        resetprop_phh pm.dexopt.post-boot-timeout 0
+        resetprop_phh dalvik.vm.dex2oat-flags --force-large-compilation-threshold=0
+        resetprop_phh dalvik.vm.background-dexopt true
+        resetprop_phh pm.dexopt.enabled true
+        resetprop_phh pm.dexopt.core-platform-only false
+        resetprop_phh pm.dexopt.downgrade_after_inactive_days 3
+
+        # Trigger manual DEXOPT compilation
+        echo "[DEXOPT] Setting aggressive DEXOPT properties..."
+
+        # Wait for system to stabilize
+        sleep 5
+
+        # Force recompilation of ALL apps
+        echo "[DEXOPT] Starting manual DEXOPT compilation for all apps..."
+        echo "[DEXOPT] This may take 10-30 minutes depending on number of apps"
+
+        # Run in background and log output
+        cmd package compile -m speed -f -a > /data/misc/dexopt.log 2>&1 &
+        DEXOPT_PID=$!
+
+        echo "[DEXOPT] Background compilation started (PID: $DEXOPT_PID)"
+        echo "[DEXOPT] Check /data/misc/dexopt.log for progress"
+        echo "[DEXOPT] Monitor with: tail -f /data/misc/dexopt.log"
+    else
+        # ===== RESET DEXOPT PROPS =====
+        resetprop_phh --delete pm.dexopt.boot
+        resetprop_phh --delete pm.dexopt.post-boot
+        resetprop_phh --delete pm.dexopt.first-boot
+        resetprop_phh --delete pm.dexopt.boot-after-ota
+        resetprop_phh --delete pm.dexopt.boot-after-mainline-update
+        resetprop_phh --delete pm.dexopt.install
+        resetprop_phh --delete pm.dexopt.install-fast
+        resetprop_phh --delete pm.dexopt.install-bulk
+        resetprop_phh --delete pm.dexopt.install-bulk-secondary
+        resetprop_phh --delete pm.dexopt.install-bulk-downgraded
+        resetprop_phh --delete pm.dexopt.install-bulk-secondary-downgraded
+        resetprop_phh --delete pm.dexopt.bg-dexopt
+        resetprop_phh --delete pm.dexopt.core-app
+        resetprop_phh --delete pm.dexopt.shared-apk
+        resetprop_phh --delete pm.dexopt.shared
+        resetprop_phh --delete pm.dexopt.nsys-library
+        resetprop_phh --delete pm.dexopt.forced-dexopt
+        resetprop_phh --delete pm.dexopt.ab-ota
+        resetprop_phh --delete pm.dexopt.inactive
+        resetprop_phh --delete pm.dexopt.cmdline
+        resetprop_phh --delete pm.dexopt.first-use
+        resetprop_phh --delete pm.dexopt.secondary
+        resetprop_phh --delete dalvik.vm.systemservercompilerfilter
+        resetprop_phh --delete dalvik.vm.systemuicompilerfilter
+        resetprop_phh --delete pm.dexopt.post-boot-timeout
+        resetprop_phh --delete dalvik.vm.dex2oat-flags
+        resetprop_phh --delete dalvik.vm.background-dexopt
+        resetprop_phh --delete pm.dexopt.enabled
+        resetprop_phh --delete pm.dexopt.core-platform-only
+        resetprop_phh --delete pm.dexopt.downgrade_after_inactive_days
+
+        echo "[DEXOPT] DEXOPT properties reset to default"
+    fi
+    exit
+fi
