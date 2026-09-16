@@ -254,12 +254,6 @@ on property:persist.sys.phh.max_performance=true
 on property:persist.sys.phh.performance_tweaks=*
     exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.performance_tweaks"
 
-# Aggressive DEXOPT Handler
-# Forces OAT recompilation for all apps to improve performance
-on property:persist.sys.phh.dexopt_aggressive=*
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/phh-prop-handler.sh "persist.sys.phh.dexopt_aggressive"
-
-
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*
     setprop debug.sf.latch_unsignaled ${persist.sys.phh.sf_latch_unsignaled}
