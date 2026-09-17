@@ -227,9 +227,9 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 #
 # Note: First boot is significantly faster as almost no AOT compilation is done during boot. After the first boot, background dexopt aggressively compiles all apps in full speed mode, which may increase CPU/IO usage and dalvik-cache size but maximizes runtime performance.
 PRODUCT_SYSTEM_PROPERTIES += \
-    pm.dexopt.first-boot=speed \
+    pm.dexopt.first-boot=verify \
     pm.dexopt.post-boot=speed \
-    pm.dexopt.boot=speed-profile \
+    pm.dexopt.boot=verify \
     pm.dexopt.boot-after-ota=verify \
     pm.dexopt.boot-after-mainline-update=verify \
     pm.dexopt.install=speed \
@@ -245,7 +245,7 @@ PRODUCT_SYSTEM_PROPERTIES += \
     pm.dexopt.nsys-library=speed \
     pm.dexopt.forced-dexopt=speed \
     pm.dexopt.ab-ota=speed \
-    pm.dexopt.inactive=speed \
+    pm.dexopt.inactive=verify \
     pm.dexopt.cmdline=speed \
     pm.dexopt.first-use=speed \
     pm.dexopt.secondary=speed \
