@@ -1032,7 +1032,7 @@ if getprop ro.vendor.build.fingerprint | grep -q -e samsung/o1s -e samsung/t2s -
     setprop persist.sys.phh.ultrasonic_udfps true
 fi
 
-if getprop ro.vendor.build.fingerprint |grep -qiE -e ASUS_I006D -e ASUS_I005 -e ASUS_I003;then
+if getprop ro.vendor.build.fingerprint |grep -qiE -e ASUS_I006D -e ASUS_I003;then
 	setprop persist.sys.phh.fod.asus true
 fi
 
