@@ -42,6 +42,11 @@
 	<dimen name="rounded_slider_background_rounded_corner">28dp</dimen>
 	<dimen name="rounded_slider_track_corner_radius">28dp</dimen>
 
+	<!-- Maximum velocity to initiate a fling, as measured in dips per second. -->
+	<dimen name="config_viewMaxFlingVelocity">12000dp</dimen>
+	<!-- Minimum velocity to initiate a fling, as measured in dips per second. -->
+	<dimen name="config_viewMinFlingVelocity">50dp</dimen>
+
 
 	<bool name="config_cellBroadcastAppLinks">true</bool>
 
