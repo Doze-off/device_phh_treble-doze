@@ -45,7 +45,7 @@
 	<!-- Maximum velocity to initiate a fling, as measured in dips per second. -->
 	<dimen name="config_viewMaxFlingVelocity">12000dp</dimen>
 	<!-- Minimum velocity to initiate a fling, as measured in dips per second. -->
-	<dimen name="config_viewMinFlingVelocity">50dp</dimen>
+	<dimen name="config_viewMinFlingVelocity">600dp</dimen>
 
 
 	<bool name="config_cellBroadcastAppLinks">true</bool>
