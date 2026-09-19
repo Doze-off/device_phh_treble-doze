@@ -1,0 +1,26 @@
+cc_binary {
+    name: "android.hardware.biometrics.fingerprint@2.3-service.anakin",
+    defaults: ["hidl_defaults"],
+    init_rc: ["android.hardware.biometrics.fingerprint@2.3-service.anakin.rc"],
+    relative_install_path: "hw",
+    srcs: [
+        "BiometricsFingerprint.cpp",
+        "service.cpp",
+        "anakin-fingerprint-rtti.S",
+    ],
+    cflags: [
+        "-Wno-unused-parameter",
+    ],
+    shared_libs: [
+        "libbase",
+        "libcutils",
+        "liblog",
+        "libhidlbase",
+        "libhardware",
+        "libutils",
+        "android.hardware.biometrics.fingerprint@2.1",
+        "android.hardware.biometrics.fingerprint@2.2",
+        "android.hardware.biometrics.fingerprint@2.3",
+        "vendor.goodix.hardware.biometrics.fingerprint@2.1",
+    ],
+}

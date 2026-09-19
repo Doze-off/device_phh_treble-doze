@@ -140,6 +140,23 @@ if [ "$1" == "sys.phh.oplus.fppress" ]; then
             echo "$prop_value" > "$node"
         fi
     done
+
+    # ASUS ROG Phone 5 / 5s (ANAKIN) FOD HBM & Coordinate Bridge
+    if [ -e /proc/globalHbm ]; then
+        echo "$prop_value" > /proc/globalHbm 2>/dev/null || true
+    fi
+    if [ -e /sys/class/drm/fod_touched ]; then
+        echo "$prop_value" > /sys/class/drm/fod_touched 2>/dev/null || true
+    fi
+    if [ "$prop_value" = "1" ]; then
+        # 540 << 16 = 35389440, 1874 << 16 = 122814464 (16.16 fixed-point format)
+        if [ -e /proc/driver/fp_xy ]; then
+            echo "35389440,122814464" > /proc/driver/fp_xy 2>/dev/null || true
+        fi
+        if [ -e /data/vendor/fp_xy ]; then
+            echo "35389440,122814464" > /data/vendor/fp_xy 2>/dev/null || true
+        fi
+    fi
     exit
 fi
 
