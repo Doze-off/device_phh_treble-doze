@@ -1034,6 +1034,14 @@ fi
 
 if getprop ro.vendor.build.fingerprint |grep -qiE -e ASUS_I006D -e ASUS_I005 -e ASUS_I003;then
 	setprop persist.sys.phh.fod.asus true
+	if getprop ro.vendor.build.fingerprint |grep -qiE -e ASUS_I005;then
+		mount -o bind /mnt/phh/empty /vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service
+		cp /system/etc/vintf/manifest.xml /mnt/phh/manifest.xml
+		sed -i 's/@2.1::IBiometricsFingerprint/@2.3::IBiometricsFingerprint/g' /mnt/phh/manifest.xml
+		chmod 644 /mnt/phh/manifest.xml
+		chcon u:object_r:system_file:s0 /mnt/phh/manifest.xml
+		mount -o bind /mnt/phh/manifest.xml /system/etc/vintf/manifest.xml
+	fi
 fi
 
 # For Asus usb port picker
