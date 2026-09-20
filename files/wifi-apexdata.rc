@@ -1,7 +1,0 @@
-on post-fs-data
-    mkdir /data/misc/apexdata/com.android.wifi 0771 root system
-    restorecon_recursive /data/misc/apexdata/com.android.wifi
-
-on property:sys.user.0.ce_available=true
-    mkdir /data/misc_ce/0/apexdata/com.android.wifi 0771 root system
-    restorecon_recursive /data/misc_ce/0/apexdata/com.android.wifi
