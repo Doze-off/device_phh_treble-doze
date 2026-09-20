@@ -1,0 +1,4 @@
+type vendor_hal_nxpnfc_service, hal_service_type, service_manager_type;
+
+# vendor_hal_nxpnfc_service AIDL AVC fix
+allow untrusted_app vendor_hal_nxpnfc_service:service_manager find;
