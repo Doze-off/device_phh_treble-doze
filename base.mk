@@ -216,57 +216,6 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     persist.sys.fflag.override.settings_provider_model=false \
     ro.setupwizard.mode=OPTIONAL \
 
-# Conservative, production-like dexopt configuration for long-term stability
-# across both old and new hardware, tuned for 6–8 core SoCs.
-#
-# - Boot-related reasons use verify or speed-profile to keep first boot and
-#   post-OTA fast while still applying some profile-guided optimization.
-# - Install, bulk install, and background dexopt use speed-profile as the
-#   primary filter, matching AOSP production defaults for a good balance
-#   between performance, storage, and compilation time.
-# - Core apps, shared APKs, system libraries, system_server, and SystemUI
-#   use full speed to maximize runtime performance where it matters most.
-# - Inactive, downgraded, and cmdline scenarios use verify to allow storage
-#   reclamation and avoid unnecessary work.
-# - dex2oat threads set to 6 and pinned to cores 0–6 to speed up AOT
-#   compilation on multi-core devices without excessive thermal impact.
-#
-# Result: fast first boot, reasonable background optimization, controlled
-# storage usage, and good runtime performance on both low-end and high-end
-# hardware.
-
-PRODUCT_SYSTEM_PROPERTIES += \
-    pm.dexopt.first-boot=verify \
-    pm.dexopt.post-boot=speed-profile \
-    pm.dexopt.boot=verify \
-    pm.dexopt.boot-after-ota=verify \
-    pm.dexopt.boot-after-mainline-update=verify \
-    pm.dexopt.install=speed-profile \
-    pm.dexopt.install-fast=skip \
-    pm.dexopt.install-bulk=speed-profile \
-    pm.dexopt.install-bulk-secondary=speed-profile \
-    pm.dexopt.install-bulk-downgraded=verify \
-    pm.dexopt.install-bulk-secondary-downgraded=verify \
-    pm.dexopt.bg-dexopt=speed-profile \
-    pm.dexopt.core-app=speed \
-    pm.dexopt.shared-apk=speed \
-    pm.dexopt.shared=speed-profile \
-    pm.dexopt.nsys-library=speed \
-    pm.dexopt.forced-dexopt=speed \
-    pm.dexopt.ab-ota=speed-profile \
-    pm.dexopt.inactive=verify \
-    pm.dexopt.cmdline=verify \
-    pm.dexopt.first-use=speed-profile \
-    pm.dexopt.secondary=speed-profile \
-    dalvik.vm.dex2oat-filter=speed-profile \
-    dalvik.vm.image-dex2oat-filter=speed-profile \
-    dalvik.vm.systemservercompilerfilter=speed \
-    dalvik.vm.systemuicompilerfilter=speed \
-    dalvik.vm.boot-dex2oat-threads=6 \
-    dalvik.vm.dex2oat-threads=6 \
-    dalvik.vm.image-dex2oat-threads=6 \
-    dalvik.vm.dex2oat-cpu-set=0,1,2,3,4,5,6
-
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.setupwizard.mode=OPTIONAL \
 
