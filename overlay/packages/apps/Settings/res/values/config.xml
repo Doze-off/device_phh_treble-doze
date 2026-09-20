@@ -8,11 +8,4 @@
 
     <!-- The number of vibration intensity levels supported by the device -->
     <integer name="config_vibration_supported_intensity_levels">3</integer>
-
-    <!-- Force LTE_CA -->
-    <string name="force_lte_ca">Force LTE CA</string>
-    <string name="force_lte_ca_summary">Force LTE carrier aggregation to work</string>
-
-    <!-- Show Force LTE_CA toggle -->
-    <bool name="config_showForceLteCaToggle" translatable="false">true</bool>
 </resources>
