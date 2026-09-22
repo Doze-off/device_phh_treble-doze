@@ -17,7 +17,8 @@ TARGET_SYSTEM_PROP += device/phh/treble/system.prop
 # Defines whether the GSI image should be built using the EROFS filesystem.
 USE_EROFS := false
 # Defines whether MicroG should be included in the build.
-BUILD_MICROG := false
+BUILD_MICROG ?= false
+BUILD_GAPPS ?= false
 
 SELINUX_IGNORE_NEVERALLOWS := true
 TARGET_NO_KERNEL_OVERRIDE := true
@@ -48,4 +49,12 @@ ifeq ($(BUILD_MICROG), true)
 else
     # Alternative line to include MicroG even when BUILD_MICROG is disabled.
     #$(call inherit-product, vendor/microg/microg.mk)
+endif
+
+
+ifeq ($(BUILD_GAPPS), true)
+    $(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
+else
+    # Alternative line to include Gapps even when BUILD_GAPPS is disabled.
+    #$(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
 endif
