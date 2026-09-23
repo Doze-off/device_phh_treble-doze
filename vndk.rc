@@ -14,6 +14,7 @@ on post-fs
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.max_compatibility
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.legacy_mode
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.max_performance
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.c2inputsurface_omx
 
 on property:vold.decrypt=trigger_restart_framework
     exec - root -- /system/bin/phh-on-data.sh
@@ -166,7 +167,6 @@ on property:persist.sys.activity_anim_perf_override=true
 # Performance: ⭐⭐⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐ | CPU Usage: Low | Battery: Excellent
 # Use this mode if video recording works normally on your device
 on property:persist.sys.phh.prefer_hw_codecs=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
@@ -181,7 +181,6 @@ on property:persist.sys.phh.prefer_hw_codecs=true
 # Enable ONLY if video recording crashes, hangs, or produces corrupted files with HW codecs
 # WARNING: Significantly higher CPU usage and battery drain
 on property:persist.sys.phh.prefer_sw_codecs=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection aidl
@@ -196,7 +195,6 @@ on property:persist.sys.phh.prefer_sw_codecs=true
 # Enable if screen recorder shows black screen, crashes, or fails to start
 # This mode prioritizes software codecs for input surface creation
 on property:persist.sys.phh.fix_screen_recorder=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 256
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
@@ -212,7 +210,6 @@ on property:persist.sys.phh.fix_screen_recorder=true
 # Good for older devices (Android 10-) or devices with buggy C2 implementation
 # C2 is available as fallback, but OMX codecs are preferred
 on property:persist.sys.phh.max_compatibility=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 512
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
@@ -228,7 +225,6 @@ on property:persist.sys.phh.max_compatibility=true
 # Use if C2 causes bootloop, system crash, or severe instability
 # WARNING: Slowest mode, highest CPU usage, avoid unless necessary
 on property:persist.sys.phh.legacy_mode=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 0
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
@@ -244,10 +240,17 @@ on property:persist.sys.phh.legacy_mode=true
 # Use if you want maximum encoding speed and battery efficiency
 # WARNING: May cause compatibility issues on older devices or buggy C2 implementations
 on property:persist.sys.phh.max_performance=true
-    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface -1
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 1024
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection hidl
+
+# C2 input surface workaround (force OMX path, skip Codec2 input surface entirely)
+# USE ONLY IF video recording / screen recorder fails with -1 (default)
+# This sets debug.stagefright.c2inputsurface=0, which bypasses all Codec2 input surface
+# attempts and falls directly to OMX service - may fix HAL bugs on some devices
+# Performance: same as prefer_hw_codecs | Compatibility: ⭐⭐⭐⭐⭐ for buggy Codec2 HALs
+on property:persist.sys.phh.c2inputsurface_omx=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface 0
 
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*
