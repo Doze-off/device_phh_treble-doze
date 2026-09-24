@@ -15,6 +15,7 @@ on post-fs
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.legacy_mode
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.max_performance
     exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.c2inputsurface_omx
+    exec u:r:phhsu_daemon:s0 root -- rm -f /data/property/persist.sys.phh.unisoc_reels_fix
 
 on property:vold.decrypt=trigger_restart_framework
     exec - root -- /system/bin/phh-on-data.sh
@@ -251,6 +252,17 @@ on property:persist.sys.phh.max_performance=true
 # Performance: same as prefer_hw_codecs | Compatibility: ⭐⭐⭐⭐⭐ for buggy Codec2 HALs
 on property:persist.sys.phh.c2inputsurface_omx=true
     exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.c2inputsurface 0
+
+# Unisoc Instagram Reels fix (fix black screen in Reels/stories)
+# FOR UNISOC DEVICES ONLY - Fixes Instagram Reels black screen issue
+# - ccodec=4: All C2 components available
+# - omx_default_rank=0: OMX at maximum priority
+# - media.c2.hal.selection: NOT SET (required for Unisoc compatibility)
+# Performance: ⭐⭐⭐⭐ | Compatibility: ⭐⭐⭐⭐⭐ for Unisoc Instagram | Battery: Good
+on property:persist.sys.phh.unisoc_reels_fix=true
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.ccodec 4
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh debug.stagefright.omx_default_rank 0
+    exec u:r:phhsu_daemon:s0 root -- /system/bin/resetprop_phh media.c2.hal.selection
 
 # Latch Unsigned Buffers
 on property:persist.sys.phh.sf_latch_unsignaled=*
